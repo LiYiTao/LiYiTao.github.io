@@ -80,14 +80,14 @@
 
 <meta name="description" content="主要做学习笔记，也记录一些想法">
 <meta property="og:type" content="website">
-<meta property="og:title" content="分类">
-<meta property="og:url" content="http://tao.github.io/categories/index.html">
+<meta property="og:title" content="记忆碎片">
+<meta property="og:url" content="http://tao.github.io/tags/index.html">
 <meta property="og:site_name" content="涛的世界线">
 <meta property="og:description" content="主要做学习笔记，也记录一些想法">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-18T08:59:33.003Z">
+<meta property="og:updated_time" content="2018-01-18T08:52:09.609Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="分类">
+<meta name="twitter:title" content="记忆碎片">
 <meta name="twitter:description" content="主要做学习笔记，也记录一些想法">
 
 
@@ -116,7 +116,7 @@
 
 
 
-  <link rel="canonical" href="http://tao.github.io/categories/"/>
+  <link rel="canonical" href="http://tao.github.io/tags/"/>
 
 
 
@@ -335,7 +335,238 @@
       
         
           
-            
+            <h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><p>Markdown 支持两种标题的语法，Setext 和 atx 形式。</p>
+<ul>
+<li>Setext ：底线形式，利用 = (最高阶)和 - (第二阶)，</li>
+<li>Atx ：行首插入 1 到 6 个 # ，对应到标题 1 到 6 阶。</li>
+</ul>
+<h3 id="修辞和强调"><a href="#修辞和强调" class="headerlink" title="修辞和强调"></a>修辞和强调</h3><ul>
+<li><em>斜体</em>: <code>* *</code></li>
+<li><strong>加粗</strong>: <code>** **</code></li>
+<li><del>删除线</del>: <code>~~ ~~</code></li>
+</ul>
+<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><p>在文本前加入 <code>&gt;</code> (大于号)</p>
+<blockquote>
+<p>这里是引用</p>
+</blockquote>
+<h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><ol>
+<li><em>无序列表</em>: <code>*、+、-</code></li>
+<li><em>有序列表</em>: 数字. </li>
+</ol>
+<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><ul>
+<li>图片：<code>![]()</code></li>
+<li>链接：<code>[]()</code></li>
+</ul>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p><code>int n = 0;</code><br>代码框：用 <code>扩起来  
+代码块：上下加三个</code></p>
+<h3 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">| Table1 | Table2 | Table3 |</span><br><span class="line">| ------ | ------ | ------ |</span><br><span class="line">| 1      | 2      | 3      |</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>Table1</th>
+<th>Table2</th>
+<th>Table3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<h3 id="换行"><a href="#换行" class="headerlink" title="换行"></a>换行</h3><p>末尾敲两个空格再回车</p>
+<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><p>三个<code>*</code>号</p>
+<hr>
+<h2 id="数学公式-Latex-语法"><a href="#数学公式-Latex-语法" class="headerlink" title="数学公式 Latex 语法"></a>数学公式 Latex 语法</h2><ul>
+<li>行内公式：单美元符号包围$ $</li>
+<li>块公式：双美元符号包围$$ $$</li>
+</ul>
+<h3 id="上下标"><a href="#上下标" class="headerlink" title="上下标"></a>上下标</h3><table>
+<thead>
+<tr>
+<th>公式</th>
+<th>markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$y^2$</td>
+<td>y^2</td>
+</tr>
+<tr>
+<td>$x_2$</td>
+<td>x_2</td>
+</tr>
+</tbody>
+</table>
+<h3 id="分数"><a href="#分数" class="headerlink" title="分数"></a>分数</h3><table>
+<thead>
+<tr>
+<th>公式</th>
+<th>markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\frac{x}{y}$</td>
+<td>\frac{x}{y}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="开根号"><a href="#开根号" class="headerlink" title="开根号"></a>开根号</h3><table>
+<thead>
+<tr>
+<th>公式</th>
+<th>markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\sqrt{x}$</td>
+<td>\sqrt{x}</td>
+</tr>
+<tr>
+<td>$\sqrt[n]{x}$</td>
+<td>\sqrt[n]{x}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="矢量"><a href="#矢量" class="headerlink" title="矢量"></a>矢量</h3><table>
+<thead>
+<tr>
+<th>公式</th>
+<th>markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\vec{a}$</td>
+<td>\vec{a}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="积分"><a href="#积分" class="headerlink" title="积分"></a>积分</h3><table>
+<thead>
+<tr>
+<th>公式</th>
+<th>markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\int^2_3{\rm d}x$</td>
+<td>\int^2_3{\rm d}x</td>
+</tr>
+</tbody>
+</table>
+<h3 id="极限"><a href="#极限" class="headerlink" title="极限"></a>极限</h3><table>
+<thead>
+<tr>
+<th>公式</th>
+<th>markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\lim_{n\rightarrow\infty}$</td>
+<td>lim_{n\rightarrow\infty}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="累加、累乘"><a href="#累加、累乘" class="headerlink" title="累加、累乘"></a>累加、累乘</h3><table>
+<thead>
+<tr>
+<th>公式</th>
+<th>markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\sum$</td>
+<td>\sum</td>
+</tr>
+<tr>
+<td>$\prod$</td>
+<td>\prod</td>
+</tr>
+</tbody>
+</table>
+<h3 id="希腊字母"><a href="#希腊字母" class="headerlink" title="希腊字母"></a>希腊字母</h3><table>
+<thead>
+<tr>
+<th>大写</th>
+<th>markdown</th>
+<th>小写</th>
+<th>markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$A$</td>
+<td>A</td>
+<td>$\alpha$</td>
+<td>\alpha</td>
+</tr>
+<tr>
+<td>$B$</td>
+<td>B</td>
+<td>$\beta$</td>
+<td>\beta</td>
+</tr>
+<tr>
+<td>$\Gamma$</td>
+<td>\Gamma</td>
+<td>$\gamma$</td>
+<td>\gamma</td>
+</tr>
+<tr>
+<td>$\Delta$</td>
+<td>\Delta</td>
+<td>$\delta$</td>
+<td>\delta</td>
+</tr>
+<tr>
+<td>待续未完</td>
+</tr>
+</tbody>
+</table>
+<h3 id="关系运算符"><a href="#关系运算符" class="headerlink" title="关系运算符"></a>关系运算符</h3><table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\pm$</td>
+<td>\pm</td>
+</tr>
+<tr>
+<td>$\times$</td>
+<td>\times</td>
+</tr>
+<tr>
+<td>$\div$</td>
+<td>\div</td>
+</tr>
+<tr>
+<td>$\neq$</td>
+<td>\neq</td>
+</tr>
+<tr>
+<td>$\leq$</td>
+<td>\leq</td>
+</tr>
+<tr>
+<td>$\geq$</td>
+<td>\geq</td>
+</tr>
+</tbody>
+</table>
+
           
         
       
