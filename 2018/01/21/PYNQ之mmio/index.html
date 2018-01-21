@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.1" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="主要做学习笔记，也记录一些想法">
+<meta property="og:type" content="website">
+<meta property="og:title" content="记忆碎片">
+<meta property="og:url" content="http://tao.github.io/tags/index.html">
+<meta property="og:site_name" content="涛的世界线">
+<meta property="og:description" content="主要做学习笔记，也记录一些想法">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-01-18T08:52:09.609Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="记忆碎片">
+<meta name="twitter:description" content="主要做学习笔记，也记录一些想法">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tao.github.io/tags/"/>
+
+
+
+
+
+  <title>PYNQ之mmio | 涛的世界线</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">涛的世界线</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">World line</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/21/PYNQ之mmio/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PYNQ之mmio</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-21T20:20:40+08:00">2018-01-21</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="MMIO概念"><a href="#MMIO概念" class="headerlink" title="MMIO概念"></a>MMIO概念</h3><p>MMIO（Memory-mapped I/O，内存映射I/O），与之对应的是PMIO（port-mapped I/O，端口映射I/O），是PC机在中央处理器（CPU）和外部设备之间执行输入输出操作的两种方法。<br>简单点说就是直接把外部设备映射为内存，CPU就可以访问地址就可以直接访问外围设备，通过MMIO就可以用python来配置FPGA上的寄存器，来控制各个IP核了。</p>
+<h2 id="mmio-py"><a href="#mmio-py" class="headerlink" title="mmio.py"></a>mmio.py</h2><p>这里主要根据PYNQ的mmio.py来看是怎么工作的，硬件上是ZYNQ芯片通过Axi-Lite总线控制其他IP核的。<br>这里只有MMIO一个类，来做读和写，比较简单。</p>
+<h3 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h3><ul>
+<li><strong>virt_base</strong> : <code>int</code><br>  虚拟基地址，The address of the page for the MMIO base address.</li>
+<li><strong>virt_offset</strong> : <code>int</code><br>  虚拟偏差，The offset of the MMIO base address from the virt_base.</li>
+<li><strong>base_addr</strong> : <code>int</code><br>  基地址，The base address, not necessarily page aligned.</li>
+<li><strong>length</strong> : <code>int</code><br>  地址范围的byte长度，The length in bytes of the address range.</li>
+<li><strong>debug</strong> : <code>bool</code><br>  是否开启调试，Turn on debug mode if it is True.</li>
+<li><strong>mmap_file</strong> : <code>file</code><br>  Underlying file object for MMIO mapping</li>
+<li><strong>mem</strong> : <code>mmap</code><br>  文件映射到内存时创建的对象，An mmap object created when mapping files to memory.</li>
+<li><strong>array</strong> : <code>numpy.ndarray</code><br>  A numpy view of the mapped range for efficient assignment</li>
+</ul>
+<h3 id="init"><a href="#init" class="headerlink" title="init"></a>init</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, base_addr, length=<span class="number">4</span>, debug=False)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> base_addr &lt; <span class="number">0</span> <span class="keyword">or</span> length &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">"Base address or length cannot be negative."</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#返回当前进程的有效用户ID</span></span><br><span class="line">    euid = os.geteuid()</span><br><span class="line">    <span class="keyword">if</span> euid != <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> EnvironmentError(<span class="string">'Root permissions required.'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Align the base address with the pages</span></span><br><span class="line">    self.virt_base = base_addr &amp; ~(mmap.PAGESIZE - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Calculate base address offset w.r.t the base address</span></span><br><span class="line">    self.virt_offset = base_addr - self.virt_base</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Storing the base address and length</span></span><br><span class="line">    self.base_addr = base_addr</span><br><span class="line">    self.length = length</span><br><span class="line"></span><br><span class="line">    self.debug = debug</span><br><span class="line">    self._debug(<span class="string">'MMIO(address, size) = (&#123;0:x&#125;, &#123;1:x&#125; bytes).'</span>,</span><br><span class="line">                self.base_addr, self.length)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Open file and mmap</span></span><br><span class="line">    self.mmap_file = os.open(<span class="string">'/dev/mem'</span>,</span><br><span class="line">                             os.O_RDWR | os.O_SYNC)</span><br><span class="line"></span><br><span class="line">    self.mem = mmap.mmap(self.mmap_file, self.length + self.virt_offset,</span><br><span class="line">                         mmap.MAP_SHARED,</span><br><span class="line">                         mmap.PROT_READ | mmap.PROT_WRITE,</span><br><span class="line">                         offset=self.virt_base)</span><br><span class="line"></span><br><span class="line">    self.array = np.frombuffer(self.mem, np.uint32,</span><br><span class="line">                               length &gt;&gt; <span class="number">2</span>, self.virt_offset)</span><br></pre></td></tr></table></figure>
+<p>返回一个新的MMIO对象</p>
+<h4 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h4><ul>
+<li><strong>base_addr</strong> : <code>int</code><br>  基地址，</li>
+<li><strong>length</strong> : <code>int</code><br>  长度，默认为4.</li>
+<li><strong>debug</strong> : <code>bool</code><br>  是否开启调试， 默认是False.</li>
+</ul>
+<h4 id="实现流程"><a href="#实现流程" class="headerlink" title="实现流程"></a>实现流程</h4><ol>
+<li>基地址和page对齐，作为虚拟基地址<br><code>self.virt_base = base_addr &amp; ~(mmap.PAGESIZE - 1)</code>  </li>
+<li>计算基地址和虚拟基地址的偏差，作为虚拟偏差<br><code>self.virt_offset = base_addr - self.virt_base</code>  </li>
+<li>储存基地址和长度</li>
+<li>打开文件和mmap<br><code>self.mmap_file = os.open(&#39;/dev/mem&#39;, os.O_RDWR | os.O_SYNC)</code><br>/dev/mem是linux物理内存的全映像，可以用来访问物理内存，按上面这样打开后就可以用mmap来访问物理内存以及外设的IO资源。<br><a href="http://blog.csdn.net/skyflying2012/article/details/47611399" target="_blank" rel="noopener">/dev/mem没那么简单</a></li>
+</ol>
+<blockquote>
+<p>mmap（Memory-mapped）内存映射，一般用来将物理地址映射为虚拟地址</p>
+</blockquote>
+<ol>
+<li>将数据内存转化为np数组<br><code>self.array = np.frombuffer(self.mem, np.uint32, length &gt;&gt; 2, self.virt_offset)</code></li>
+</ol>
+<blockquote>
+<p>np.frombuffer 将mem内存转化成np的数组，接下来只要读写数组就相当于读写内存了</p>
+</blockquote>
+<h3 id="read"><a href="#read" class="headerlink" title="read"></a>read</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">def read(self, offset=0, length=4):</span><br><span class="line">    if length != 4:</span><br><span class="line">        raise ValueError(&quot;MMIO currently only supports 4-byte reads.&quot;)</span><br><span class="line">    if offset &lt; 0:</span><br><span class="line">        raise ValueError(&quot;Offset cannot be negative.&quot;)</span><br><span class="line">    idx = offset &gt;&gt; 2</span><br><span class="line">    if offset % 4:</span><br><span class="line">        raise MemoryError(&apos;Unaligned read: offset must be multiple of 4.&apos;)</span><br><span class="line"></span><br><span class="line">    self._debug(&apos;Reading &#123;0&#125; bytes from offset &#123;1:x&#125;&apos;,</span><br><span class="line">                length, offset)</span><br><span class="line"></span><br><span class="line">    # Read data out</span><br><span class="line">    return int(self.array[idx])</span><br></pre></td></tr></table></figure>
+<p>从MMIO读取数据</p>
+<h4 id="参数-1"><a href="#参数-1" class="headerlink" title="参数"></a>参数</h4><ul>
+<li><strong>offset</strong> : <code>int</code><br>  相对于基地址的偏移量，从这里读取</li>
+<li><strong>length</strong> : <code>int</code><br>  数据分割的长度</li>
+</ul>
+<p><code>idx = offset &gt;&gt; 2</code><br>右移两位相当于除以4，因为是按4字节长度存成数组的，所以索引要除以4。</p>
+<h3 id="write"><a href="#write" class="headerlink" title="write"></a>write</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">def write(self, offset, data):</span><br><span class="line">    if offset &lt; 0:</span><br><span class="line">        raise ValueError(&quot;Offset cannot be negative.&quot;)</span><br><span class="line"></span><br><span class="line">    idx = offset &gt;&gt; 2</span><br><span class="line">    if offset % 4:</span><br><span class="line">        raise MemoryError(&apos;Unaligned write: offset must be multiple of 4.&apos;)</span><br><span class="line"></span><br><span class="line">    if type(data) is int:</span><br><span class="line">        self._debug(&apos;Writing 4 bytes to offset &#123;0:x&#125;: &#123;1:x&#125;&apos;,</span><br><span class="line">                    offset, data)</span><br><span class="line">        self.array[idx] = np.uint32(data)</span><br><span class="line">    elif type(data) is bytes:</span><br><span class="line">        length = len(data)</span><br><span class="line">        num_words = length &gt;&gt; 2</span><br><span class="line">        if length % 4:</span><br><span class="line">            raise MemoryError(&apos;Unaligned write: data length must be multiple of 4.&apos;)</span><br><span class="line">        buf = np.frombuffer(data, np.uint32, num_words, 0)</span><br><span class="line">        self.array[idx:idx + num_words] = buf</span><br><span class="line">    else:</span><br><span class="line">        raise ValueError(&quot;Data type must be int or bytes.&quot;)</span><br></pre></td></tr></table></figure>
+<p>写入数据到MIMO  </p>
+<h4 id="参数-2"><a href="#参数-2" class="headerlink" title="参数"></a>参数</h4><ul>
+<li><strong>offset</strong> : <code>int</code><br>  相对于基地址的偏移量，从这里写入</li>
+<li><strong>data</strong> : <code>int / bytes</code><br>  要写入到MMIO的数据，分成int整型和bytes字节型</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/PYNQ/" rel="tag"># PYNQ</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/21/PYNQ之AXI-Interconnect/" rel="next" title="PYNQ之AXI-Interconnect">
+                <i class="fa fa-chevron-left"></i> PYNQ之AXI-Interconnect
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/21/PYNQ之overlay/" rel="prev" title="PYNQ之overlay">
+                PYNQ之overlay <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="Tao" />
+            
+              <p class="site-author-name" itemprop="name">Tao</p>
+              <p class="site-description motion-element" itemprop="description">主要做学习笔记，也记录一些想法</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#MMIO概念"><span class="nav-number">1.</span> <span class="nav-text">MMIO概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mmio-py"><span class="nav-number"></span> <span class="nav-text">mmio.py</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#属性"><span class="nav-number">1.</span> <span class="nav-text">属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#init"><span class="nav-number">2.</span> <span class="nav-text">init</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数"><span class="nav-number">2.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现流程"><span class="nav-number">2.2.</span> <span class="nav-text">实现流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#read"><span class="nav-number">3.</span> <span class="nav-text">read</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数-1"><span class="nav-number">3.1.</span> <span class="nav-text">参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#write"><span class="nav-number">4.</span> <span class="nav-text">write</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数-2"><span class="nav-number">4.1.</span> <span class="nav-text">参数</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tao</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Pisces</a> v6.0.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -122,7 +122,7 @@
 
 
 
-  <title>Markdown语法 | 涛的世界线</title>
+  <title>PYNQ之AXI-Interconnect | 涛的世界线</title>
   
 
 
@@ -265,7 +265,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/18/Markdown语法/">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/21/PYNQ之AXI-Interconnect/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Tao">
@@ -282,7 +282,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Markdown语法</h1>
+          <h1 class="post-title" itemprop="name headline">PYNQ之AXI-Interconnect</h1>
         
 
         <div class="post-meta">
@@ -294,7 +294,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-18T16:53:33+08:00">2018-01-18</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-21T20:20:23+08:00">2018-01-21</time>
             
 
             
@@ -330,237 +330,46 @@
       
 
       
-        <h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><p>Markdown 支持两种标题的语法，Setext 和 atx 形式。</p>
-<ul>
-<li>Setext ：底线形式，利用 = (最高阶)和 - (第二阶)，</li>
-<li>Atx ：行首插入 1 到 6 个 # ，对应到标题 1 到 6 阶。</li>
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>AXI协议严格的讲是一个点对点的主从接口协议，当多个外设需要互相交互数据时，我们需要加入一个AXI Interconnect模块（AXI互联），作用是提供将一个或多个AXI主设备连接到一个或多个AXI从设备的一种交换机制。<br>包含多个LogicCORE IP核实例（infrastructure cores，基础核），会自动引入infrastructure cores来让任意AXI主设备和AXI从设备连接连接。</p>
+<h3 id="AXI-Infrastructure-Cores"><a href="#AXI-Infrastructure-Cores" class="headerlink" title="AXI Infrastructure Cores"></a>AXI Infrastructure Cores</h3><ul>
+<li><strong>AXI Crossbar</strong> 将一个或者多个相似的内存映射的主设备连接到一个或者多个相似的内 存映射的从设备。  </li>
+<li><em>*AXI Data Width Converter</em> *将一个内存映射的主设备连接到一个数据位宽不同的内存 映射的从设备。  </li>
+<li><strong>AXI Clock Converter</strong> 将一个内存映射的主设备连接到一个不同时钟域的内存映射的 从设备。  </li>
+<li><strong>AXI Protocol Converter</strong> 将AXI4、AXI3或者AXI4-Lite协议的主设备连接到不同AXI协 议的内存映射从设备。  </li>
+<li><strong>AXI Data FIFO</strong> 在内存映射的主设备与从设备之间连接一些FIFO缓存。  </li>
+<li><strong>AXI Register Slice</strong> 在内存映射的主从设备之间插入一组并行的寄存器，典型目的是为了打断关键路径。  </li>
+<li><strong>AXI MMU</strong> 为AXI互联模块提供地址范围译码和设备从映射服务。  </li>
 </ul>
-<h3 id="修辞和强调"><a href="#修辞和强调" class="headerlink" title="修辞和强调"></a>修辞和强调</h3><ul>
-<li><em>斜体</em>: <code>* *</code></li>
-<li><strong>加粗</strong>: <code>** **</code></li>
-<li><del>删除线</del>: <code>~~ ~~</code></li>
+<p>因为我要研究怎么控制多个IP核，这里只介绍一下我需要用到的几个cores。  </p>
+<h4 id="AXI-Crossbar"><a href="#AXI-Crossbar" class="headerlink" title="AXI Crossbar"></a>AXI Crossbar</h4><ul>
+<li>只有在多个Master或多个Slave时才会用到。（最多可以有16个M和16个S）</li>
+<li>可选互联架构（Selectable Interconnect Architecture）<ul>
+<li>Crossbar mode（性能最优）<ul>
+<li>Shared-Address, Multiple-Data （SAMD共享地址多路数据）</li>
+<li>读写数据通道都是并行的crossbar路径。当多个读或写数据源需要传输的时候，数据可以彼此独立、并行的传输。</li>
+<li>根据配置连接映射来减少crossbar 数据路径，来减少资源的占用</li>
+<li>共享的写地址仲裁器, 加上一个共享的读地址仲裁器。</li>
+<li>只有在AXI互联模块被配置被AXI4或者AXI3 协议时，Crossbar模式才有效。</li>
 </ul>
-<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><p>在文本前加入 <code>&gt;</code> (大于号)</p>
-<blockquote>
-<p>这里是引用</p>
-</blockquote>
-<h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><ol>
-<li><em>无序列表</em>: <code>*、+、-</code></li>
-<li><em>有序列表</em>: 数字. </li>
-</ol>
-<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><ul>
-<li>图片：<code>![]()</code></li>
-<li>链接：<code>[]()</code></li>
+</li>
+<li>Shared Access mode （面积最优）<ul>
+<li>共享的读数据路径,共享的写数据路径和一个共享的读些地址路径</li>
+<li>一次传输仅支持一个事务，使用资源最少 </li>
 </ul>
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p><code>int n = 0;</code><br>代码框：用 <code>扩起来  
-代码块：上下加三个</code></p>
-<h3 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">| Table1 | Table2 | Table3 |</span><br><span class="line">| ------ | ------ | ------ |</span><br><span class="line">| 1      | 2      | 3      |</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>Table1</th>
-<th>Table2</th>
-<th>Table3</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>2</td>
-<td>3</td>
-</tr>
-</tbody>
-</table>
-<h3 id="换行"><a href="#换行" class="headerlink" title="换行"></a>换行</h3><p>末尾敲两个空格再回车</p>
-<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><p>三个<code>*</code>号</p>
-<hr>
-<h2 id="数学公式-Latex-语法"><a href="#数学公式-Latex-语法" class="headerlink" title="数学公式 Latex 语法"></a>数学公式 Latex 语法</h2><ul>
-<li>行内公式：单美元符号包围$ $</li>
-<li>块公式：双美元符号包围$$ $$</li>
+</li>
 </ul>
-<h3 id="上下标"><a href="#上下标" class="headerlink" title="上下标"></a>上下标</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$y^2$</td>
-<td>y^2</td>
-</tr>
-<tr>
-<td>$x_2$</td>
-<td>x_2</td>
-</tr>
-</tbody>
-</table>
-<h3 id="分数"><a href="#分数" class="headerlink" title="分数"></a>分数</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\frac{x}{y}$</td>
-<td>\frac{x}{y}</td>
-</tr>
-</tbody>
-</table>
-<h3 id="开根号"><a href="#开根号" class="headerlink" title="开根号"></a>开根号</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\sqrt{x}$</td>
-<td>\sqrt{x}</td>
-</tr>
-<tr>
-<td>$\sqrt[n]{x}$</td>
-<td>\sqrt[n]{x}</td>
-</tr>
-</tbody>
-</table>
-<h3 id="矢量"><a href="#矢量" class="headerlink" title="矢量"></a>矢量</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\vec{a}$</td>
-<td>\vec{a}</td>
-</tr>
-</tbody>
-</table>
-<h3 id="积分"><a href="#积分" class="headerlink" title="积分"></a>积分</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\int^2_3{\rm d}x$</td>
-<td>\int^2_3{\rm d}x</td>
-</tr>
-</tbody>
-</table>
-<h3 id="极限"><a href="#极限" class="headerlink" title="极限"></a>极限</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\lim_{n\rightarrow\infty}$</td>
-<td>lim_{n\rightarrow\infty}</td>
-</tr>
-</tbody>
-</table>
-<h3 id="累加、累乘"><a href="#累加、累乘" class="headerlink" title="累加、累乘"></a>累加、累乘</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\sum$</td>
-<td>\sum</td>
-</tr>
-<tr>
-<td>$\prod$</td>
-<td>\prod</td>
-</tr>
-</tbody>
-</table>
-<h3 id="希腊字母"><a href="#希腊字母" class="headerlink" title="希腊字母"></a>希腊字母</h3><table>
-<thead>
-<tr>
-<th>大写</th>
-<th>markdown</th>
-<th>小写</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$A$</td>
-<td>A</td>
-<td>$\alpha$</td>
-<td>\alpha</td>
-</tr>
-<tr>
-<td>$B$</td>
-<td>B</td>
-<td>$\beta$</td>
-<td>\beta</td>
-</tr>
-<tr>
-<td>$\Gamma$</td>
-<td>\Gamma</td>
-<td>$\gamma$</td>
-<td>\gamma</td>
-</tr>
-<tr>
-<td>$\Delta$</td>
-<td>\Delta</td>
-<td>$\delta$</td>
-<td>\delta</td>
-</tr>
-<tr>
-<td>待续未完</td>
-</tr>
-</tbody>
-</table>
-<h3 id="关系运算符"><a href="#关系运算符" class="headerlink" title="关系运算符"></a>关系运算符</h3><table>
-<thead>
-<tr>
-<th>运算符</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\pm$</td>
-<td>\pm</td>
-</tr>
-<tr>
-<td>$\times$</td>
-<td>\times</td>
-</tr>
-<tr>
-<td>$\div$</td>
-<td>\div</td>
-</tr>
-<tr>
-<td>$\neq$</td>
-<td>\neq</td>
-</tr>
-<tr>
-<td>$\leq$</td>
-<td>\leq</td>
-</tr>
-<tr>
-<td>$\geq$</td>
-<td>\geq</td>
-</tr>
-</tbody>
-</table>
+</li>
+</ul>
+<h4 id="AXI-Protocol-Converter"><a href="#AXI-Protocol-Converter" class="headerlink" title="AXI Protocol Converter"></a>AXI Protocol Converter</h4><ul>
+<li>AXI4、AXI3 到 AXI4-Lite 的协议转换</li>
+<li>AXI4 到 AXI3 的协议转换</li>
+</ul>
+<h3 id="使用模式"><a href="#使用模式" class="headerlink" title="使用模式"></a>使用模式</h3><ul>
+<li>N-to-1 interconnect<br>  多个主设备仲裁访问一个从设备，比如内存控制器</li>
+<li>1-to-N interconnect<br>  一个主设备访问多个从设备，比如处理器访问多个内存映射</li>
+<li>N-to-M interconnect(Crossbar Mode)<br>  特点是共享内存，多路数据</li>
+<li>M-to-N interconnect(Shared Access Mode)</li>
+</ul>
 
       
     </div>
@@ -578,7 +387,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/日常技巧/" rel="tag"># 日常技巧</a>
+            <a href="/tags/PYNQ/" rel="tag"># PYNQ</a>
           
         </div>
       
@@ -591,8 +400,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/16/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2018/01/19/PYNQ之dma/" rel="next" title="PYNQ之dma">
+                <i class="fa fa-chevron-left"></i> PYNQ之dma
               </a>
             
           </div>
@@ -601,8 +410,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/01/19/PYNQ之dma/" rel="prev" title="PYNQ之dma">
-                PYNQ之dma <i class="fa fa-chevron-right"></i>
+              <a href="/2018/01/21/PYNQ之mmio/" rel="prev" title="PYNQ之mmio">
+                PYNQ之mmio <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -727,7 +536,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#标题"><span class="nav-number">1.</span> <span class="nav-text">标题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修辞和强调"><span class="nav-number">2.</span> <span class="nav-text">修辞和强调</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引用"><span class="nav-number">3.</span> <span class="nav-text">引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表"><span class="nav-number">4.</span> <span class="nav-text">列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#图片与链接"><span class="nav-number">5.</span> <span class="nav-text">图片与链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码"><span class="nav-number">6.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#表格"><span class="nav-number">7.</span> <span class="nav-text">表格</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#换行"><span class="nav-number">8.</span> <span class="nav-text">换行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分割线"><span class="nav-number">9.</span> <span class="nav-text">分割线</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数学公式-Latex-语法"><span class="nav-number"></span> <span class="nav-text">数学公式 Latex 语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#上下标"><span class="nav-number">1.</span> <span class="nav-text">上下标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分数"><span class="nav-number">2.</span> <span class="nav-text">分数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开根号"><span class="nav-number">3.</span> <span class="nav-text">开根号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#矢量"><span class="nav-number">4.</span> <span class="nav-text">矢量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#积分"><span class="nav-number">5.</span> <span class="nav-text">积分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#极限"><span class="nav-number">6.</span> <span class="nav-text">极限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#累加、累乘"><span class="nav-number">7.</span> <span class="nav-text">累加、累乘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#希腊字母"><span class="nav-number">8.</span> <span class="nav-text">希腊字母</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关系运算符"><span class="nav-number">9.</span> <span class="nav-text">关系运算符</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AXI-Infrastructure-Cores"><span class="nav-number">1.1.</span> <span class="nav-text">AXI Infrastructure Cores</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AXI-Crossbar"><span class="nav-number">1.1.1.</span> <span class="nav-text">AXI Crossbar</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AXI-Protocol-Converter"><span class="nav-number">1.1.2.</span> <span class="nav-text">AXI Protocol Converter</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用模式"><span class="nav-number">1.2.</span> <span class="nav-text">使用模式</span></a></li></ol></li></ol></div>
             
 
           </div>
