@@ -418,7 +418,7 @@
 </li>
 <li><p>根据ip_dict 和 hierarchy_dict建立_IPMap类对象，作为overlay._ip_map，会新建一个属性axi_dma_0，值为对应的驱动描述。</p>
 </li>
-<li>然后<code>overlay.axi_dma_0</code>时，就会调用overlay的getattr方法，获取overlay._ip_map的axi_dma_0属性，这里应该会根据DMA类（继承自DefaultIP）创建对应的ip驱动，具体还不是很清除，help(overlay)看看axi_dma_0的驱动是不是DMA。<br><a href="http://pynq.readthedocs.io/en/latest/overlay_design_methodology/overlay_tutorial.html?highlight=DefaultIP%20" target="_blank" rel="noopener">到底是哪里调用了DefaultIP可以参考这个教程</a></li>
+<li>然后<code>overlay.axi_dma_0</code>时，就会调用overlay的getattr方法，获取overlay._ip_map的axi_dma_0属性，这里应该会根据DMA类（继承自DefaultIP）创建对应的ip驱动，具体还不是很清除，help(overlay)看到axi_dma_0是用pynq.lib.dma.DMA类来初始化的。<br><a href="http://pynq.readthedocs.io/en/latest/overlay_design_methodology/overlay_tutorial.html?highlight=DefaultIP%20" target="_blank" rel="noopener">到底是哪里调用了DefaultIP可以参考这个教程</a></li>
 </ol>
 
       
@@ -459,6 +459,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/22/控制多个IP核/" rel="prev" title="控制多个IP核">
+                控制多个IP核 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -536,7 +540,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-count">7</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
