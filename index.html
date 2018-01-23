@@ -80,14 +80,14 @@
 
 <meta name="description" content="主要做学习笔记，也记录一些想法">
 <meta property="og:type" content="website">
-<meta property="og:title" content="记忆碎片">
-<meta property="og:url" content="http://tao.github.io/tags/index.html">
+<meta property="og:title" content="分类">
+<meta property="og:url" content="http://tao.github.io/categories/index.html">
 <meta property="og:site_name" content="涛的世界线">
 <meta property="og:description" content="主要做学习笔记，也记录一些想法">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-18T08:52:09.609Z">
+<meta property="og:updated_time" content="2018-01-18T08:59:33.003Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="记忆碎片">
+<meta name="twitter:title" content="分类">
 <meta name="twitter:description" content="主要做学习笔记，也记录一些想法">
 
 
@@ -116,7 +116,7 @@
 
 
 
-  <link rel="canonical" href="http://tao.github.io/tags/"/>
+  <link rel="canonical" href="http://tao.github.io/categories/"/>
 
 
 
@@ -266,10 +266,252 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/23/AXI-LITE总线协议/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李一涛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/23/AXI-LITE总线协议/" itemprop="url">AXI-LITE总线协议</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-23T10:24:47+08:00">2018-01-23</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>AXI（Advanced eXtensible Interface）本是由ARM公司提出的一种总线协议，Xilinx从6系列的FPGA开始对AXI总线提供支持，此时AXI已经发展到了AXI4这个版本，所以当你用到Xilinx的软件的时候看到的都是“AIX4”的IP，如Vivado打包一个AXI IP的时候，看到的都是Create a new AXI4 peripheral。<br>AXI总线有三种类型：</p>
+<ul>
+<li><p><strong>AXI4</strong>：主要面向高性能地址映射通信的需求，是面向地址映射的接口，允许最大256轮的数据突发传输；</p>
+</li>
+<li><p><strong>AXI4-Stream</strong>：面向高速流数据传输；去掉了地址项，允许无限制的数据突发传输规模，之前DMA到FIFO间数据传输就是用的AXI-Stream。</p>
+</li>
+<li><p><strong>AXI4-Lite</strong>：是一个轻量级的地址映射单次传输接口，占用很少的逻辑单元。主要用于命令的控制。今天主要分析这个。</p>
+</li>
+</ul>
+<h2 id="详解"><a href="#详解" class="headerlink" title="详解"></a>详解</h2><h3 id="信号组成"><a href="#信号组成" class="headerlink" title="信号组成"></a>信号组成</h3><ol>
+<li>读地址通道：ARVALID, ARADDR, ARREADY信号；</li>
+<li>读数据通道：RVALID, RDATA, RREADY, RRESP信号；</li>
+<li>写地址通道：AWVALID，AWADDR, AWREADY信号；</li>
+<li>写数据通道：WVALID, WDATA，WSTRB, WREADY信号；</li>
+<li>写应答通道：BVALID, BRESP, BREADY信号；</li>
+<li>系统通道：ACLK，ARESETN信号。</li>
+</ol>
+<blockquote>
+<p>读地址信号都是以AR开头（A：address；R：read）<br>写地址信号都是以AW开头（A：address；W：write）<br>读数据信号都是以R开头（R：read）<br>写数据信号都是以W开头（W：write）<br>应答型号都是以B开头（B：back）<br>AXI4-Stream总线的信号都是以 T 开头的</p>
+</blockquote>
+<h3 id="AXI-接口"><a href="#AXI-接口" class="headerlink" title="AXI 接口"></a>AXI 接口</h3><ul>
+<li><strong>AXI-GP</strong>接口：是通用的AXI接口，包括两个32位主设备接口和两个32位从设备接口，用过改接口可以访问PS中的片内外设。</li>
+<li><strong>AXI-HP</strong>接口：是高性能/带宽的标准的接口，PL模块作为主设备连接（从下图中箭头可以看出）。主要用于PL访问PS上的存储器（DDR和On-Chip RAM）</li>
+<li><strong>AXI-ACP</strong>接口：是ARM多核架构下定义的一种接口，中文翻译为加速器一致性端口，用来管理DMA之类的不带缓存的AXI外设，PS端是Slave接口。</li>
+</ul>
+<h3 id="AXI-握手过程"><a href="#AXI-握手过程" class="headerlink" title="AXI 握手过程"></a>AXI 握手过程</h3><p>采用的是READY，VALID握手通信机制。Slave产生READY信号来指明已经准备好接受数据或控制信息。Master产生VALID信号表示发送数据有效。这样就会有下面三种情况：（都是在后一信号为高后的下一个上升沿开始传输）</p>
+<ol>
+<li>VALID先变高READY后变高</li>
+<li>READY先变高VALID后变高</li>
+<li>VALID和READY信号同时变高</li>
+</ol>
+<blockquote>
+<p>AXI的五个通道，每个通道都有握手机制</p>
+</blockquote>
+<h3 id="读写时序图"><a href="#读写时序图" class="headerlink" title="读写时序图"></a>读写时序图</h3><p><img src="AXI-LITE总线协议/AXI_read.png" alt="image"><br><img src="AXI-LITE总线协议/AXI_write.png" alt="image"></p>
+<h3 id="AXI-代码"><a href="#AXI-代码" class="headerlink" title="AXI 代码"></a>AXI 代码</h3><p>这里是通过VIVADO生成AXI_LITE的IP产生的参考代码来分析的，这里只创建了一个S_AXI_LITE接口，为以后写自己控制的模块做准备。先看顶层模块的接口定义。</p>
+<h4 id="接口信号"><a href="#接口信号" class="headerlink" title="接口信号"></a>接口信号</h4><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_aclk,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_aresetn,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [C_S_AXI_ADDR_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_awaddr,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [<span class="number">2</span> : <span class="number">0</span>] s_axi_awprot,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_awvalid,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_awready,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [C_S_AXI_DATA_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_wdata,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [(C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span> : <span class="number">0</span>] s_axi_wstrb,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_wvalid,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_wready,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span> [<span class="number">1</span> : <span class="number">0</span>] s_axi_bresp,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_bvalid,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_bready,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [C_S_AXI_ADDR_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_araddr,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [<span class="number">2</span> : <span class="number">0</span>] s_axi_arprot,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_arvalid,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_arready,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span> [C_S_AXI_DATA_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_rdata,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span> [<span class="number">1</span> : <span class="number">0</span>] s_axi_rresp,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_rvalid,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_rready</span><br></pre></td></tr></table></figure>
+<p>下面详细介绍每个信号</p>
+<ol>
+<li><strong>读通道</strong></li>
+</ol>
+<ul>
+<li>ARVALID<br>  读地址有效。此信号表明Master的地址和控制信息有效</li>
+<li>RVALID<br>  读数据有效。此信号表明Master的数据有效</li>
+<li>ARADDR<br>  读地址</li>
+<li>RDATA<br>  读数据</li>
+<li>ARREADY<br>  读地址准备好了。该信号指示Slave准备好接受一个地址和相关联的控制信号</li>
+<li>RREADY<br>  读数据准备好了。该信号指示Slave准备好接收数据</li>
+<li>ARPROT<br>  保护类型。这个信号表示该事务的特权和安全级别，并确定是否该事务是一个数据存取或指令的访问</li>
+<li>RRESP<br>  读取响应。这个信号表明读事务处理的状态。</li>
+</ul>
+<ol>
+<li><strong>写通道</strong></li>
+</ol>
+<ul>
+<li>AWVALID<br>  写地址有效。这个信号表示Master的写地址和控制信息有效。</li>
+<li>WVALID<br>  写有效。这个信号表示Master的写数据和选通信号有效。</li>
+<li>AWADDR<br>  写地址</li>
+<li>WDATA<br>  写数据</li>
+<li>AWREADY<br>  写地址准备好了。该信号指示Slave准备好接受一个地址和相关联的控制信号</li>
+<li>WREADY<br>  写准备好了。该信号指示Slave可以接受写数据。</li>
+<li>WSTRB<br>  写选通。这个信号表明该字节通道持有效数据。每一bit对应WDATA一个字节</li>
+<li>AWPROT<br>  写通道保护类型。这个信号表示该事务的特权和安全级别，并确定是否该事务是一个数据存取或指令的访问</li>
+</ul>
+<ol>
+<li><strong>应答通道</strong></li>
+</ol>
+<ul>
+<li>BVALID<br>  写响应有效。此信号表明写命令的有效写入响应。</li>
+<li>BREADY<br>  响应准备。该信号指示Master可以接受一个响应信号</li>
+<li>BRESP<br>  写响应。这个信号表示写事务处理的状态。</li>
+</ul>
+<h4 id="axi-awready"><a href="#axi-awready" class="headerlink" title="axi_awready"></a>axi_awready</h4><p><code>assign S_AXI_AWREADY    = axi_awready;</code>  直接输出的地址写就绪<br>需要S_AXI_AWVALID和S_AXI_WVALID都为高，既写地址有效，写数据有效时，拉高写地址就绪。aw_en表示写地址使能，表示地址已经好了，是后面的条件。<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          axi_awready &lt;= <span class="number">1'b0</span>;</span><br><span class="line">          aw_en &lt;= <span class="number">1'b1</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span>    </span><br><span class="line">          <span class="keyword">if</span> (~axi_awready &amp;&amp; S_AXI_AWVALID &amp;&amp; S_AXI_WVALID &amp;&amp; aw_en)</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              <span class="comment">// slave is ready to accept write address when </span></span><br><span class="line">              <span class="comment">// there is a valid write address and write data</span></span><br><span class="line">              <span class="comment">// on the write address and data bus. This design </span></span><br><span class="line">              <span class="comment">// expects no outstanding transactions. </span></span><br><span class="line">              axi_awready &lt;= <span class="number">1'b1</span>;</span><br><span class="line">              aw_en &lt;= <span class="number">1'b0</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (S_AXI_BREADY &amp;&amp; axi_bvalid)</span><br><span class="line">                <span class="keyword">begin</span></span><br><span class="line">                  aw_en &lt;= <span class="number">1'b1</span>;</span><br><span class="line">                  axi_awready &lt;= <span class="number">1'b0</span>;</span><br><span class="line">                <span class="keyword">end</span></span><br><span class="line">          <span class="keyword">else</span>           </span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              axi_awready &lt;= <span class="number">1'b0</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="axi-awaddr"><a href="#axi-awaddr" class="headerlink" title="axi_awaddr"></a>axi_awaddr</h4><p>用来锁存住地址，需要：S_AXI_AWVALID、S_AXI_WVALID、aw_en都为高。<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          axi_awaddr &lt;= <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span>    </span><br><span class="line">          <span class="keyword">if</span> (~axi_awready &amp;&amp; S_AXI_AWVALID &amp;&amp; S_AXI_WVALID &amp;&amp; aw_en)</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              <span class="comment">// Write Address latching </span></span><br><span class="line">              axi_awaddr &lt;= S_AXI_AWADDR;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="axi-wready"><a href="#axi-wready" class="headerlink" title="axi_wready"></a>axi_wready</h4><p><code>assign S_AXI_WREADY    = axi_wready;</code>输出的写数据准备接收就绪<br>需要：S_AXI_AWVALID、S_AXI_WVALID、aw_en都为高<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          axi_wready &lt;= <span class="number">1'b0</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span>    </span><br><span class="line">          <span class="keyword">if</span> (~axi_wready &amp;&amp; S_AXI_WVALID &amp;&amp; S_AXI_AWVALID &amp;&amp; aw_en )</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              <span class="comment">// slave is ready to accept write data when </span></span><br><span class="line">              <span class="comment">// there is a valid write address and write data</span></span><br><span class="line">              <span class="comment">// on the write address and data bus. This design </span></span><br><span class="line">              <span class="comment">// expects no outstanding transactions. </span></span><br><span class="line">              axi_wready &lt;= <span class="number">1'b1</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">          <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              axi_wready &lt;= <span class="number">1'b0</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="PS写入到PL寄存器"><a href="#PS写入到PL寄存器" class="headerlink" title="PS写入到PL寄存器"></a>PS写入到PL寄存器</h4><p>这部分实现内存映射寄存器的选择和写逻辑的生成。<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assign</span> slv_reg_wren = axi_wready &amp;&amp; S_AXI_WVALID &amp;&amp; axi_awready &amp;&amp; S_AXI_AWVALID;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          slv_reg0 &lt;= <span class="number">0</span>;</span><br><span class="line">          slv_reg1 &lt;= <span class="number">0</span>;</span><br><span class="line">          slv_reg2 &lt;= <span class="number">0</span>;</span><br><span class="line">          slv_reg3 &lt;= <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">        <span class="keyword">if</span> (slv_reg_wren)</span><br><span class="line">          <span class="keyword">begin</span></span><br><span class="line">            <span class="keyword">case</span> ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )</span><br><span class="line">              <span class="number">2'h0</span>:</span><br><span class="line">                <span class="keyword">for</span> ( byte_index = <span class="number">0</span>; byte_index &lt;= (C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span>; byte_index = byte_index+<span class="number">1</span> )</span><br><span class="line">                  <span class="keyword">if</span> ( S_AXI_WSTRB[byte_index] == <span class="number">1</span> ) <span class="keyword">begin</span></span><br><span class="line">                    <span class="comment">// Respective byte enables are asserted as per write strobes </span></span><br><span class="line">                    <span class="comment">// Slave register 0</span></span><br><span class="line">                    slv_reg0[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>] &lt;= S_AXI_WDATA[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>];</span><br><span class="line">                  <span class="keyword">end</span>  </span><br><span class="line">              <span class="number">2'h1</span>:</span><br><span class="line">                <span class="keyword">for</span> ( byte_index = <span class="number">0</span>; byte_index &lt;= (C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span>; byte_index = byte_index+<span class="number">1</span> )</span><br><span class="line">                  <span class="keyword">if</span> ( S_AXI_WSTRB[byte_index] == <span class="number">1</span> ) <span class="keyword">begin</span></span><br><span class="line">                    <span class="comment">// Respective byte enables are asserted as per write strobes </span></span><br><span class="line">                    <span class="comment">// Slave register 1</span></span><br><span class="line">                    slv_reg1[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>] &lt;= S_AXI_WDATA[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>];</span><br><span class="line">                  <span class="keyword">end</span>  </span><br><span class="line">              <span class="number">2'h2</span>:</span><br><span class="line">                <span class="keyword">for</span> ( byte_index = <span class="number">0</span>; byte_index &lt;= (C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span>; byte_index = byte_index+<span class="number">1</span> )</span><br><span class="line">                  <span class="keyword">if</span> ( S_AXI_WSTRB[byte_index] == <span class="number">1</span> ) <span class="keyword">begin</span></span><br><span class="line">                    <span class="comment">// Respective byte enables are asserted as per write strobes </span></span><br><span class="line">                    <span class="comment">// Slave register 2</span></span><br><span class="line">                    slv_reg2[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>] &lt;= S_AXI_WDATA[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>];</span><br><span class="line">                  <span class="keyword">end</span>  </span><br><span class="line">              <span class="number">2'h3</span>:</span><br><span class="line">                <span class="keyword">for</span> ( byte_index = <span class="number">0</span>; byte_index &lt;= (C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span>; byte_index = byte_index+<span class="number">1</span> )</span><br><span class="line">                  <span class="keyword">if</span> ( S_AXI_WSTRB[byte_index] == <span class="number">1</span> ) <span class="keyword">begin</span></span><br><span class="line">                    <span class="comment">// Respective byte enables are asserted as per write strobes </span></span><br><span class="line">                    <span class="comment">// Slave register 3</span></span><br><span class="line">                    slv_reg3[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>] &lt;= S_AXI_WDATA[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>];</span><br><span class="line">                  <span class="keyword">end</span>  </span><br><span class="line">              <span class="keyword">default</span> : <span class="keyword">begin</span></span><br><span class="line">                          slv_reg0 &lt;= slv_reg0;</span><br><span class="line">                          slv_reg1 &lt;= slv_reg1;</span><br><span class="line">                          slv_reg2 &lt;= slv_reg2;</span><br><span class="line">                          slv_reg3 &lt;= slv_reg3;</span><br><span class="line">                        <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">endcase</span></span><br><span class="line">          <span class="keyword">end</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>这段程序的作用是，当PS那边向AXI4-Lite总线写数据时，PL这边负责将数据接收到寄存器slv_reg。而slv_reg寄存器有0~3共4个。至于赋值给哪一个由axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB]决定，根据宏定义其实就是由axi_awaddr[3:2]（写地址中不仅包含地址，而且包含了控制位，这里的[3:2]就是控制位）决定赋值给哪个slv_reg。</p>
+<p>PS调用写函数时，如果不做地址偏移的话，axi_awaddr[3:2]的值默认是为0的，举个例子，如果我们自定义的IP的地址被映射为0x43C00000，那么我们mmio(0x43C00000,Value)写的就是slv_reg0的值。如果地址偏移4位，如<br>mmio(0x43C00000 + 4,Value) 写的就是slv_reg1的值，依次类推。</p>
+<p>下面只提取slv_reg0来说明，其他是类似的：<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ( byte_index = <span class="number">0</span>; byte_index &lt;= (C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span>; byte_index = byte_index+<span class="number">1</span> )</span><br><span class="line">    <span class="keyword">if</span> ( S_AXI_WSTRB[byte_index] == <span class="number">1</span> ) </span><br><span class="line">      <span class="keyword">begin</span></span><br><span class="line">        slv_reg0[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>] &lt;= S_AXI_WDATA[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>];</span><br><span class="line">      <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>其中，C_S_AXI_DATA_WIDTH的宏定义的值为32，也就是数据位宽，S_AXI_WSTRB就是写选通信号，S_AXI_WDATA就是写数据信号。<br>当byte_index = 0的时候，就读取低8位，<code>slv_reg0[7:0] &lt;= S_AXI_WDATA[7:0];</code>，所以WSTRB控制着WDATA中哪些字节能够被写入寄存器。<br>这样，我们只需要读取slv_reg0的值，就可以得到PS段写入的数据了。</p>
+<h4 id="axi-bvalid-、-axi-bresp"><a href="#axi-bvalid-、-axi-bresp" class="headerlink" title="axi_bvalid 、 axi_bresp"></a>axi_bvalid 、 axi_bresp</h4><p>写应答逻辑生成，直接输出到总线<br><code>assign S_AXI_BRESP    = axi_bresp;</code><br><code>assign S_AXI_BVALID    = axi_bvalid;</code><br>axi_bvalid表示已将数据写入，axi_bresp回应的内容有4种见下表。</p>
+<table>
+<thead>
+<tr>
+<th>BRESP[1:0]</th>
+<th>Response</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>b00</td>
+<td>OKAY</td>
+<td>正常通道传输成功</td>
+</tr>
+<tr>
+<td>b01</td>
+<td>EXOKAY</td>
+<td>独特通道传输成功</td>
+</tr>
+<tr>
+<td>b10</td>
+<td>SLVERR</td>
+<td>从机错误</td>
+</tr>
+<tr>
+<td>b11</td>
+<td>DECERR</td>
+<td>解码错误</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          axi_bvalid  &lt;= <span class="number">0</span>;</span><br><span class="line">          axi_bresp   &lt;= <span class="number">2'b0</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span>    </span><br><span class="line">          <span class="keyword">if</span> (axi_awready &amp;&amp; S_AXI_AWVALID &amp;&amp; ~axi_bvalid &amp;&amp; axi_wready &amp;&amp; S_AXI_WVALID)</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              <span class="comment">// indicates a valid write response is available</span></span><br><span class="line">              axi_bvalid &lt;= <span class="number">1'b1</span>;</span><br><span class="line">              axi_bresp  &lt;= <span class="number">2'b0</span>; <span class="comment">// 'OKAY' response </span></span><br><span class="line">            <span class="keyword">end</span>                   <span class="comment">// work error responses in future</span></span><br><span class="line">          <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              <span class="keyword">if</span> (S_AXI_BREADY &amp;&amp; axi_bvalid) </span><br><span class="line">                <span class="comment">//check if bready is asserted while bvalid is high) </span></span><br><span class="line">                <span class="comment">//(there is a possibility that bready is always asserted high)   </span></span><br><span class="line">                <span class="keyword">begin</span></span><br><span class="line">                  axi_bvalid &lt;= <span class="number">1'b0</span>; </span><br><span class="line">                <span class="keyword">end</span>  </span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h4 id="axi-arready-、-axi-arvalid"><a href="#axi-arready-、-axi-arvalid" class="headerlink" title="axi_arready 、 axi_arvalid"></a>axi_arready 、 axi_arvalid</h4><p><code>assign S_AXI_ARREADY    = axi_arready;</code>地址读就绪<br><code>assign S_AXI_RVALID    = axi_rvalid;</code>地址读有效，这些都类似，容易理解，不详细分析了。</p>
+<h4 id="PS读取PL寄存器"><a href="#PS读取PL寄存器" class="headerlink" title="PS读取PL寄存器"></a>PS读取PL寄存器</h4><p>先根据控制位选择读取哪个寄存器。根据axi_araddr[3:2]选择把哪个寄存器slv_reg赋值给输出寄存器reg_data_out。<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assign</span> slv_reg_rden = axi_arready &amp; S_AXI_ARVALID &amp; ~axi_rvalid;</span><br><span class="line"><span class="keyword">always</span> @(*)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="comment">// Address decoding for reading registers</span></span><br><span class="line">    <span class="keyword">case</span> ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )</span><br><span class="line">        <span class="number">2'h0</span>   : reg_data_out &lt;= slv_reg0;</span><br><span class="line">        <span class="number">2'h1</span>   : reg_data_out &lt;= slv_reg1;</span><br><span class="line">        <span class="number">2'h2</span>   : reg_data_out &lt;= slv_reg2;</span><br><span class="line">        <span class="number">2'h3</span>   : reg_data_out &lt;= slv_reg3;</span><br><span class="line">        <span class="keyword">default</span> : reg_data_out &lt;= <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">endcase</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>然后把数据输出到总线<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          axi_rdata  &lt;= <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span>    </span><br><span class="line">          <span class="comment">// When there is a valid read address (S_AXI_ARVALID) with </span></span><br><span class="line">          <span class="comment">// acceptance of read address by the slave (axi_arready), </span></span><br><span class="line">          <span class="comment">// output the read dada </span></span><br><span class="line">          <span class="keyword">if</span> (slv_reg_rden)</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              axi_rdata &lt;= reg_data_out;     <span class="comment">// register read data</span></span><br><span class="line">            <span class="keyword">end</span>   </span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>同样当PS调用读取函数时，这里axi_awaddr[3:2]默认是0，所以我们只需要把slv_reg0替换成我们自己数据，就可以让PS通过总线读到我们提供的数据。或者通过<strong>基地址+4</strong>来选择下一个寄存器。</p>
+<blockquote>
+<p>目前这里只有4个寄存器，那是因为之前选择的是4个，其实我们可以定义的更多，在生成IP核的Number of Registers里选择。</p>
+</blockquote>
+<h3 id="重要的事情再说一遍"><a href="#重要的事情再说一遍" class="headerlink" title="重要的事情再说一遍"></a>重要的事情再说一遍</h3><p>如果我们自定义的IP的地址被映射为0x43C00000，那么用mmio(0x43C00000,Value)写的就是slv_reg0的值。如果地址偏移4位，如mmio(0x43C00000 + 4,Value) 写的就是slv_reg1的值。</p>
+<h3 id="补充一个对地址的理解"><a href="#补充一个对地址的理解" class="headerlink" title="补充一个对地址的理解"></a>补充一个对地址的理解</h3><p>地址编辑器种的offset Address应该是指基地址BASEADDR，high Address指的是最高地址。要求i是基地址加偏置不能超过最高地址。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/22/控制多个IP核/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Tao">
+      <meta itemprop="name" content="李一涛">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/uploads/avatar.png">
     </span>
@@ -412,7 +654,7 @@
     <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/21/PYNQ之overlay/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Tao">
+      <meta itemprop="name" content="李一涛">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/uploads/avatar.png">
     </span>
@@ -621,7 +863,7 @@
     <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/21/PYNQ之mmio/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Tao">
+      <meta itemprop="name" content="李一涛">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/uploads/avatar.png">
     </span>
@@ -787,7 +1029,7 @@
     <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/21/PYNQ之AXI-Interconnect/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Tao">
+      <meta itemprop="name" content="李一涛">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/uploads/avatar.png">
     </span>
@@ -946,7 +1188,7 @@
     <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/19/PYNQ之dma/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Tao">
+      <meta itemprop="name" content="李一涛">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/uploads/avatar.png">
     </span>
@@ -1161,7 +1403,7 @@
     <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/18/Markdown语法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Tao">
+      <meta itemprop="name" content="李一涛">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/uploads/avatar.png">
     </span>
@@ -1511,7 +1753,7 @@
     <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/16/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Tao">
+      <meta itemprop="name" content="李一涛">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/uploads/avatar.png">
     </span>
@@ -1655,9 +1897,9 @@
             
               <img class="site-author-image" itemprop="image"
                 src="/uploads/avatar.png"
-                alt="Tao" />
+                alt="李一涛" />
             
-              <p class="site-author-name" itemprop="name">Tao</p>
+              <p class="site-author-name" itemprop="name">李一涛</p>
               <p class="site-description motion-element" itemprop="description">主要做学习笔记，也记录一些想法</p>
           </div>
 
@@ -1668,7 +1910,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-count">8</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1681,7 +1923,7 @@
                 
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
-                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-count">3</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -1722,7 +1964,7 @@
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Tao</span>
+  <span class="author" itemprop="copyrightHolder">李一涛</span>
 
   
 
