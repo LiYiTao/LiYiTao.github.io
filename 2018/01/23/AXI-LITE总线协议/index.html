@@ -216,15 +216,15 @@
         </li>
       
         
-        <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
             <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-timenode">
+          <a href="/timenode/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-circle-o-notch"></i> <br />时间节点</a>
         </li>
       
 
@@ -364,7 +364,7 @@
 <blockquote>
 <p>AXI的五个通道，每个通道都有握手机制</p>
 </blockquote>
-<h3 id="读写时序图"><a href="#读写时序图" class="headerlink" title="读写时序图"></a>读写时序图</h3><p><img src="AXI-LITE总线协议/AXI_read.png" alt="image"><br><img src="AXI-LITE总线协议/AXI_write.png" alt="image"></p>
+<h3 id="读写时序图"><a href="#读写时序图" class="headerlink" title="读写时序图"></a>读写时序图</h3><p><img src="/2018/01/23/AXI-LITE总线协议/AXI_read.png" alt="image"><br><img src="/2018/01/23/AXI-LITE总线协议/AXI_write.png" alt="image"></p>
 <h3 id="AXI-代码"><a href="#AXI-代码" class="headerlink" title="AXI 代码"></a>AXI 代码</h3><p>这里是通过VIVADO生成AXI_LITE的IP产生的参考代码来分析的，这里只创建了一个S_AXI_LITE接口，为以后写自己控制的模块做准备。先看顶层模块的接口定义。</p>
 <h4 id="接口信号"><a href="#接口信号" class="headerlink" title="接口信号"></a>接口信号</h4><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_aclk,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_aresetn,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [C_S_AXI_ADDR_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_awaddr,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [<span class="number">2</span> : <span class="number">0</span>] s_axi_awprot,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_awvalid,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_awready,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [C_S_AXI_DATA_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_wdata,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [(C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span> : <span class="number">0</span>] s_axi_wstrb,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_wvalid,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_wready,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span> [<span class="number">1</span> : <span class="number">0</span>] s_axi_bresp,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_bvalid,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_bready,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [C_S_AXI_ADDR_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_araddr,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [<span class="number">2</span> : <span class="number">0</span>] s_axi_arprot,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_arvalid,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_arready,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span> [C_S_AXI_DATA_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_rdata,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span> [<span class="number">1</span> : <span class="number">0</span>] s_axi_rresp,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_rvalid,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_rready</span><br></pre></td></tr></table></figure>
 <p>下面详细介绍每个信号</p>
@@ -495,6 +495,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/01/24/AXI-LITE实现控制自定义IP核/" rel="prev" title="AXI-LITE实现控制自定义IP核">
+                AXI-LITE实现控制自定义IP核 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -571,7 +575,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

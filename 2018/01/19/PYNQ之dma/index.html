@@ -216,15 +216,15 @@
         </li>
       
         
-        <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
             <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-timenode">
+          <a href="/timenode/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-circle-o-notch"></i> <br />时间节点</a>
         </li>
       
 
@@ -423,9 +423,9 @@
 <h4 id="get-ndarray"><a href="#get-ndarray" class="headerlink" title="get_ndarray"></a>get_ndarray</h4><p>从DMA buffer获取一个numpy ndarry</p>
 <h4 id="configure"><a href="#configure" class="headerlink" title="configure"></a>configure</h4><p>重新配置并重新初始化IP核</p>
 <h2 id="使用实例"><a href="#使用实例" class="headerlink" title="使用实例"></a>使用实例</h2><p>不是完整的程序，只说明关键步骤。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">dma = overlay.axi_dma_0</span><br><span class="line">xlnk = Xlnk()</span><br><span class="line">in_buffer = xlnk.cma_array(shape=(<span class="number">4</span>,), dtype=np.uint32)</span><br><span class="line">out_buffer = xlnk.cma_array(shape=(<span class="number">4</span>,), dtype=np.uint32)</span><br><span class="line"></span><br><span class="line">dma.sendchannel.transfer(in_buffer)</span><br><span class="line">dma.recvchannel.transfer(out_buffer) </span><br><span class="line">dma.sendchannel.wait()</span><br><span class="line">dma.recvchannel.wait()</span><br></pre></td></tr></table></figure></p>
-<h4 id="建立DMA实例"><a href="#建立DMA实例" class="headerlink" title="建立DMA实例"></a>建立DMA实例</h4><p><code>dma = overlay.axi_dma_0</code><br>这里的axi_dma_0是BD设计中IP核的名字，overlay会根据tcl获取对应的描述ip dict，这样实例化类对象，overlay里并没有dma，不是很理解。</p>
+<h4 id="建立DMA实例"><a href="#建立DMA实例" class="headerlink" title="建立DMA实例"></a>建立DMA实例</h4><p><code>dma = overlay.axi_dma_0</code><br>这里有点复杂，再后面的overlay里说明，可以简单理解为根据axi_dma_0的驱动描述pynq.lib.dma.DMA建立了一个DMA类对象赋给dma。</p>
 <h4 id="建立buffer"><a href="#建立buffer" class="headerlink" title="建立buffer"></a>建立buffer</h4><p>因为DMA搬运只能是物理地址连续的，所以只能用xlnk来建立buffer。</p>
-<h4 id="传输数据"><a href="#传输数据" class="headerlink" title="传输数据"></a>传输数据</h4><p>实例化了dma就会有两个通道属性。掉用transfer函数设置地址和长度并开始传输，wait等待传输完成进入idle状态。</p>
+<h4 id="传输数据"><a href="#传输数据" class="headerlink" title="传输数据"></a>传输数据</h4><p>实例化了dma就会有两个通道属性。调用transfer函数设置地址和长度并开始传输，wait等待传输完成进入idle状态。</p>
 
       
     </div>
@@ -546,7 +546,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

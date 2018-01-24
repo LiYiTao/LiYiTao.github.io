@@ -122,7 +122,7 @@
 
 
 
-  <title>PYNQ之AXI-Interconnect | 涛的世界线</title>
+  <title>AXI-LITE实现控制自定义IP核 | 涛的世界线</title>
   
 
 
@@ -265,7 +265,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/21/PYNQ之AXI-Interconnect/">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/24/AXI-LITE实现控制自定义IP核/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="李一涛">
@@ -282,7 +282,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">PYNQ之AXI-Interconnect</h1>
+          <h1 class="post-title" itemprop="name headline">AXI-LITE实现控制自定义IP核</h1>
         
 
         <div class="post-meta">
@@ -294,7 +294,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-21T20:20:23+08:00">2018-01-21</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-24T09:02:15+08:00">2018-01-24</time>
             
 
             
@@ -330,46 +330,19 @@
       
 
       
-        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>AXI协议严格的讲是一个点对点的主从接口协议，当多个外设需要互相交互数据时，我们需要加入一个AXI Interconnect模块（AXI互联），作用是提供将一个或多个AXI主设备连接到一个或多个AXI从设备的一种交换机制。包含多个LogicCORE IP核实例（infrastructure cores，基础核），会自动引入infrastructure cores来让任意AXI主设备和AXI从设备连接连接。<br>后来感觉不需要单独写一篇来介绍，只需要理解为可以连接多个主从就行了，比如需要用PYNQ控制多个IP核，类似分线器的功能。</p>
-<h3 id="AXI-Infrastructure-Cores"><a href="#AXI-Infrastructure-Cores" class="headerlink" title="AXI Infrastructure Cores"></a>AXI Infrastructure Cores</h3><ul>
-<li><strong>AXI Crossbar</strong> 将一个或者多个相似的内存映射的主设备连接到一个或者多个相似的内 存映射的从设备。  </li>
-<li><em>*AXI Data Width Converter</em> *将一个内存映射的主设备连接到一个数据位宽不同的内存 映射的从设备。  </li>
-<li><strong>AXI Clock Converter</strong> 将一个内存映射的主设备连接到一个不同时钟域的内存映射的 从设备。  </li>
-<li><strong>AXI Protocol Converter</strong> 将AXI4、AXI3或者AXI4-Lite协议的主设备连接到不同AXI协 议的内存映射从设备。  </li>
-<li><strong>AXI Data FIFO</strong> 在内存映射的主设备与从设备之间连接一些FIFO缓存。  </li>
-<li><strong>AXI Register Slice</strong> 在内存映射的主从设备之间插入一组并行的寄存器，典型目的是为了打断关键路径。  </li>
-<li><strong>AXI MMU</strong> 为AXI互联模块提供地址范围译码和设备从映射服务。  </li>
-</ul>
-<p>因为我要研究怎么控制多个IP核，这里只介绍一下我需要用到的几个cores。  </p>
-<h4 id="AXI-Crossbar"><a href="#AXI-Crossbar" class="headerlink" title="AXI Crossbar"></a>AXI Crossbar</h4><ul>
-<li>只有在多个Master或多个Slave时才会用到。（最多可以有16个M和16个S）</li>
-<li>可选互联架构（Selectable Interconnect Architecture）<ul>
-<li>Crossbar mode（性能最优）<ul>
-<li>Shared-Address, Multiple-Data （SAMD共享地址多路数据）</li>
-<li>读写数据通道都是并行的crossbar路径。当多个读或写数据源需要传输的时候，数据可以彼此独立、并行的传输。</li>
-<li>根据配置连接映射来减少crossbar 数据路径，来减少资源的占用</li>
-<li>共享的写地址仲裁器, 加上一个共享的读地址仲裁器。</li>
-<li>只有在AXI互联模块被配置被AXI4或者AXI3 协议时，Crossbar模式才有效。</li>
-</ul>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这是一个小实验，主要实现自定义一个S_AXI_LITE接口的IP核，然后用PS写入数据该IP核的寄存器，再从该寄存器读取。<br>主要通过mmio来实现读写，关键程序如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mmio.write(offset, value)</span><br><span class="line">mmio.read(offset)</span><br></pre></td></tr></table></figure></p>
+<h2 id="详解"><a href="#详解" class="headerlink" title="详解"></a>详解</h2><h3 id="接线"><a href="#接线" class="headerlink" title="接线"></a>接线</h3><p>只要在ZYNQ的M_AXI_GP0连接的AXI Interconnect添加一个Master口，再接在自定义IP核的S_AXI口就行了，用的是AXI_LITE协议。</p>
+<h3 id="程序设计"><a href="#程序设计" class="headerlink" title="程序设计"></a>程序设计</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">print(overlay.ip_dict)</span><br><span class="line">print(overlay.ip_dict.keys())</span><br><span class="line"></span><br><span class="line">my_ip = overlay.tao_axi_lite_ctrl_0</span><br><span class="line"></span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span>, <span class="number">1</span>)</span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span> + <span class="number">4</span>, <span class="number">2</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span> + <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<ol>
+<li>先是加载overlay<br><code>overlay = Overlay(&#39;/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit&#39;)</code></li>
+<li>输出overlayd的ip_dict看看，有没自定义的IP核<br><code>print(overlay.ip_dict)</code><br><code>print(overlay.ip_dict.keys())</code></li>
+<li>创建自定义IP核的对象<br><code>my_ip = overlay.tao_axi_lite_ctrl_0</code><br>这里有很多要解释，之前已经说过了，会根据_IPMap类把ip_dict等字典封装好，输入<code>overlay.tao_axi_lite_ctrl_0</code>，会根据这个key，找出其对应的驱动driver，这里的driver’: <class 'pynq.lib.defaultip'="">，因为我没有为这个IP核自定义驱动，所以会调用默认的DefaultIP来初始化，之前一直没理解驱动类别是怎么判定的，现在发现是在_TCL解析种识别并加入到对应的ip_dict中的，如果要自定义驱动的话，要在自定义驱动中加上<code>bindto = [&#39;xilinx.com:ip:axi_dma:7.1&#39;]</code>，才能识别自定义IP核并绑定到自定义的驱动，具体的信息是在TCL中，这个以后去实验，再介绍。</class></li>
+<li>这样就可以知道是根据默认驱动DefaultIP来初始化的了，DefaultIP很简单，就是定义了一个mmio对象和读写mmio的函数。所以返回的my_ip其实是一个DefaultIP类的对象，我可以直接用类内定义的读函数，也可以通过类的属性my_ip.mmio（类内根据ip_dict定义的一个MMIO类对象），直接用mmio的读和写。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my_ip.mmio.write(<span class="number">0x00</span>, <span class="number">1</span>)</span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span> + <span class="number">4</span>, <span class="number">2</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span> + <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
 </li>
-<li>Shared Access mode （面积最优）<ul>
-<li>共享的读数据路径,共享的写数据路径和一个共享的读些地址路径</li>
-<li>一次传输仅支持一个事务，使用资源最少 </li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="AXI-Protocol-Converter"><a href="#AXI-Protocol-Converter" class="headerlink" title="AXI Protocol Converter"></a>AXI Protocol Converter</h4><ul>
-<li>AXI4、AXI3 到 AXI4-Lite 的协议转换</li>
-<li>AXI4 到 AXI3 的协议转换</li>
-</ul>
-<h3 id="使用模式"><a href="#使用模式" class="headerlink" title="使用模式"></a>使用模式</h3><ul>
-<li>N-to-1 interconnect<br>  多个主设备仲裁访问一个从设备，比如内存控制器</li>
-<li>1-to-N interconnect<br>  一个主设备访问多个从设备，比如处理器访问多个内存映射</li>
-<li>N-to-M interconnect(Crossbar Mode)<br>  特点是共享内存，多路数据</li>
-<li>M-to-N interconnect(Shared Access Mode)</li>
-</ul>
+</ol>
+<p>两个参数分别是偏置和值。注意传入的基地址表示的是IP核的slv_reg0寄存器，基地址+4表示slv_reg1寄存器，所以我这里是分别给两个寄存器写入值，再读出来。</p>
+<h4 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'axi_dma_0'</span>: &#123;<span class="string">'phys_addr'</span>: <span class="number">1077936128</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:ip:axi_dma:7.1'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'axi_dma_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">lib</span>.<span class="title">dma</span>.<span class="title">DMA</span>'&gt;&#125;</span></span><br><span class="line"><span class="class">'<span class="title">tao_axi_lite_ctrl_0</span>':</span> &#123;<span class="string">'phys_addr'</span>: <span class="number">1136656384</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:user:tao_axi_lite_ctrl:1.0'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'tao_axi_lite_ctrl_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">overlay</span>.<span class="title">DefaultIP</span>'&gt;&#125;&#125;</span></span><br></pre></td></tr></table></figure>
+<p>正确识别出两个IP核信息，并且能正确输入和读取。</p>
 
       
     </div>
@@ -389,8 +362,6 @@
           
             <a href="/tags/PYNQ/" rel="tag"># PYNQ</a>
           
-            <a href="/tags/AXI/" rel="tag"># AXI</a>
-          
         </div>
       
 
@@ -402,8 +373,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/19/PYNQ之dma/" rel="next" title="PYNQ之dma">
-                <i class="fa fa-chevron-left"></i> PYNQ之dma
+              <a href="/2018/01/23/AXI-LITE总线协议/" rel="next" title="AXI-LITE总线协议">
+                <i class="fa fa-chevron-left"></i> AXI-LITE总线协议
               </a>
             
           </div>
@@ -411,10 +382,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/01/21/PYNQ之mmio/" rel="prev" title="PYNQ之mmio">
-                PYNQ之mmio <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -538,7 +505,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AXI-Infrastructure-Cores"><span class="nav-number">1.1.</span> <span class="nav-text">AXI Infrastructure Cores</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AXI-Crossbar"><span class="nav-number">1.1.1.</span> <span class="nav-text">AXI Crossbar</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AXI-Protocol-Converter"><span class="nav-number">1.1.2.</span> <span class="nav-text">AXI Protocol Converter</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用模式"><span class="nav-number">1.2.</span> <span class="nav-text">使用模式</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#详解"><span class="nav-number">2.</span> <span class="nav-text">详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#接线"><span class="nav-number">2.1.</span> <span class="nav-text">接线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序设计"><span class="nav-number">2.2.</span> <span class="nav-text">程序设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#运行结果"><span class="nav-number">2.2.1.</span> <span class="nav-text">运行结果</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
