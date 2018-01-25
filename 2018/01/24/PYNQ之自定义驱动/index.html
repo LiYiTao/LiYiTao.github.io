@@ -122,7 +122,7 @@
 
 
 
-  <title>AXI-LITE实现控制自定义IP核 | 涛的世界线</title>
+  <title>PYNQ之自定义驱动 | 涛的世界线</title>
   
 
 
@@ -265,7 +265,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/24/AXI-LITE实现控制自定义IP核/">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/24/PYNQ之自定义驱动/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="李一涛">
@@ -282,7 +282,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">AXI-LITE实现控制自定义IP核</h1>
+          <h1 class="post-title" itemprop="name headline">PYNQ之自定义驱动</h1>
         
 
         <div class="post-meta">
@@ -294,7 +294,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-24T09:02:15+08:00">2018-01-24</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-24T16:10:07+08:00">2018-01-24</time>
             
 
             
@@ -330,20 +330,19 @@
       
 
       
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这是一个小实验，主要实现自定义一个S_AXI_LITE接口的IP核，然后用PS写入数据该IP核的寄存器，再从该寄存器读取。<br>主要通过mmio来实现读写，关键程序如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mmio.write(offset, value)</span><br><span class="line">mmio.read(offset)</span><br></pre></td></tr></table></figure></p>
-<h2 id="详解"><a href="#详解" class="headerlink" title="详解"></a>详解</h2><h3 id="自定义IP核"><a href="#自定义IP核" class="headerlink" title="自定义IP核"></a>自定义IP核</h3><p>就是用vivado生成的带一个S_AXI_LITE的IP核。内部含有四个寄存器供写入和读取，分别是slv_reg0、slv_reg1、slv_reg2、slv_reg3。</p>
-<h3 id="接线"><a href="#接线" class="headerlink" title="接线"></a>接线</h3><p>只要在ZYNQ的M_AXI_GP0连接的AXI Interconnect添加一个Master口，再接在自定义IP核的S_AXI口就行了，用的是AXI_LITE协议。</p>
-<h3 id="程序设计"><a href="#程序设计" class="headerlink" title="程序设计"></a>程序设计</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">print(overlay.ip_dict)</span><br><span class="line">print(overlay.ip_dict.keys())</span><br><span class="line"></span><br><span class="line">my_ip = overlay.tao_axi_lite_ctrl_0</span><br><span class="line"></span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span>, <span class="number">1</span>)</span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span> + <span class="number">4</span>, <span class="number">2</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span> + <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
-<ol>
-<li>先是加载overlay<br><code>overlay = Overlay(&#39;/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit&#39;)</code></li>
-<li>输出overlayd的ip_dict看看，有没自定义的IP核<br><code>print(overlay.ip_dict)</code><br><code>print(overlay.ip_dict.keys())</code></li>
-<li>创建自定义IP核的对象<br><code>my_ip = overlay.tao_axi_lite_ctrl_0</code><br>这里有很多要解释，之前已经说过了，会根据_IPMap类把ip_dict等字典封装好，输入<code>overlay.tao_axi_lite_ctrl_0</code>，会根据这个key，找出其对应的驱动driver，这里的driver’: <class 'pynq.lib.defaultip'="">，因为我没有为这个IP核自定义驱动，所以会调用默认的DefaultIP来初始化，之前一直没理解驱动类别是怎么判定的，现在发现是在_TCL解析种识别并加入到对应的ip_dict中的，如果要自定义驱动的话，要在自定义驱动中加上<code>bindto = [&#39;xilinx.com:ip:axi_dma:7.1&#39;]</code>，才能识别自定义IP核并绑定到自定义的驱动，具体的信息是在TCL中，这个以后去实验，再介绍。</class></li>
-<li>这样就可以知道是根据默认驱动DefaultIP来初始化的了，DefaultIP很简单，就是定义了一个mmio对象和读写mmio的函数。所以返回的my_ip其实是一个DefaultIP类的对象，我可以直接用类内定义的读函数，也可以通过类的属性my_ip.mmio（类内根据ip_dict定义的一个MMIO类对象），直接用mmio的读和写。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my_ip.mmio.write(<span class="number">0x00</span>, <span class="number">1</span>)</span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span> + <span class="number">4</span>, <span class="number">2</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span> + <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+        <h2 id="自定义驱动-Driver"><a href="#自定义驱动-Driver" class="headerlink" title="自定义驱动 Driver"></a>自定义驱动 Driver</h2><h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>当我们自定义了一个新的IP核，在软件中调用时，是用默认的驱动DefaultIP去实例化的，默认驱动只有简单的创建mmio和读写，对于我们需要的功能可能就不友好了。因此我们可以为自定义IP核自定义一个driver。<br>接着之前自定义IP核往下做，之前的IP核什么功能都没有，只有四个寄存器供读写，现在我写一个驱动实现读取（reg0、reg1）两个寄存器里的值，相加并返回（虽然没有一点用而且本末倒置了），来实现添加驱动的实验。</p>
+<h3 id="设计要求"><a href="#设计要求" class="headerlink" title="设计要求"></a>设计要求</h3><ol>
+<li>自定义驱动要继承自<code>DefaultIP</code></li>
+<li>类的构造函数只能有一个参数<code>description</code>，且通过super来传递</li>
+<li><p>要用<strong>bindto</strong>绑定到IP的类型<br> 类型的查找方法，在ip_dict中，每个IP核有个type，其对应的值就是要绑定的类型，比如下面的dma中</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'axi_dma_0'</span>: &#123;<span class="string">'phys_addr'</span>: <span class="number">1077936128</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:ip:axi_dma:7.1'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'axi_dma_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">lib</span>.<span class="title">dma</span>.<span class="title">DMA</span>'&gt;&#125;</span></span><br></pre></td></tr></table></figure>
+<p> 可以发现tyep的值为<code>xilinx.com:ip:axi_dma:7.1</code>，所以要在DMA类中添加<br> <code>bindto = [&#39;xilinx.com:ip:axi_dma:7.1&#39;]</code><br> 就可以成功绑定，之后发现这种类型的IP核（比如这里的axi_dma_0），就会自动调用DMA来驱动，而不是DefaultIP了</p>
 </li>
 </ol>
-<p>两个参数分别是偏置和值。注意传入的基地址表示的是IP核的slv_reg0寄存器，基地址+4表示slv_reg1寄存器，所以我这里是分别给两个寄存器写入值，再读出来。</p>
-<h4 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'axi_dma_0'</span>: &#123;<span class="string">'phys_addr'</span>: <span class="number">1077936128</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:ip:axi_dma:7.1'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'axi_dma_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">lib</span>.<span class="title">dma</span>.<span class="title">DMA</span>'&gt;&#125;</span></span><br><span class="line"><span class="class">'<span class="title">tao_axi_lite_ctrl_0</span>':</span> &#123;<span class="string">'phys_addr'</span>: <span class="number">1136656384</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:user:tao_axi_lite_ctrl:1.0'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'tao_axi_lite_ctrl_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">overlay</span>.<span class="title">DefaultIP</span>'&gt;&#125;&#125;</span></span><br></pre></td></tr></table></figure>
-<p>正确识别出两个IP核信息，并且能正确输入和读取。</p>
+<h3 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h3><h4 id="驱动定义"><a href="#驱动定义" class="headerlink" title="驱动定义"></a>驱动定义</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pynq <span class="keyword">import</span> DefaultIP</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDriver</span><span class="params">(DefaultIP)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, description)</span>:</span></span><br><span class="line">        super().__init__(description=description)</span><br><span class="line"></span><br><span class="line">    bindto = [<span class="string">'xilinx.com:user:tao_axi_lite_ctrl:1.0'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(self)</span>:</span></span><br><span class="line">        a = self.read(<span class="number">0x00</span>)</span><br><span class="line">        b = self.read(<span class="number">0x00</span> + <span class="number">4</span>)</span><br><span class="line">        <span class="keyword">return</span> a + b</span><br></pre></td></tr></table></figure>
+<p>定义了一个函数，读取两个寄存器的值，相加返回</p>
+<h4 id="验证结果"><a href="#验证结果" class="headerlink" title="验证结果"></a>验证结果</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">print(overlay.ip_dict)</span><br><span class="line">print(overlay.ip_dict.keys())</span><br><span class="line"><span class="comment">#help(overlay)</span></span><br><span class="line">my_ip = overlay.tao_axi_lite_ctrl_0</span><br><span class="line"><span class="comment">#help(my_ip)</span></span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span>, <span class="number">1</span>)       <span class="comment">#写入1到reg0</span></span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span> + <span class="number">4</span>, <span class="number">2</span>)   <span class="comment">#写入2到reg1</span></span><br><span class="line">print(my_ip.read(<span class="number">0x00</span>))         <span class="comment">#读取reg0得1</span></span><br><span class="line">print(my_ip.read(<span class="number">0x00</span> + <span class="number">4</span>))     <span class="comment">#读取reg1得2</span></span><br><span class="line"></span><br><span class="line">my_ip.add() <span class="comment">#调用驱动定义的函数，读取reg0,reg1并相加</span></span><br></pre></td></tr></table></figure>
+<p>分别写入1和2到reg0和reg1，调用<code>my_ip.add</code>函数，得到结果3。同时可以从ip_dict中发现，自定义IP核的驱动描述driver变成了<code>__main__.MyDriver</code>，因为我这个自定义驱动写在了main下。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'tao_axi_lite_ctrl_0'</span>: &#123;<span class="string">'phys_addr'</span>: <span class="number">1136656384</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:user:tao_axi_lite_ctrl:1.0'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'tao_axi_lite_ctrl_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">__main__</span>.<span class="title">MyDriver</span>'&gt;&#125;</span></span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -374,8 +373,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/23/AXI-LITE总线协议/" rel="next" title="AXI-LITE总线协议">
-                <i class="fa fa-chevron-left"></i> AXI-LITE总线协议
+              <a href="/2018/01/24/AXI-LITE实现控制自定义IP核/" rel="next" title="AXI-LITE实现控制自定义IP核">
+                <i class="fa fa-chevron-left"></i> AXI-LITE实现控制自定义IP核
               </a>
             
           </div>
@@ -384,8 +383,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/01/24/PYNQ之自定义驱动/" rel="prev" title="PYNQ之自定义驱动">
-                PYNQ之自定义驱动 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/01/25/PYNQ之软硬控制小结/" rel="prev" title="PYNQ之软硬控制小结">
+                PYNQ之软硬控制小结 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -510,7 +509,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#详解"><span class="nav-number">2.</span> <span class="nav-text">详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义IP核"><span class="nav-number">2.1.</span> <span class="nav-text">自定义IP核</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接线"><span class="nav-number">2.2.</span> <span class="nav-text">接线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序设计"><span class="nav-number">2.3.</span> <span class="nav-text">程序设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#运行结果"><span class="nav-number">2.3.1.</span> <span class="nav-text">运行结果</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义驱动-Driver"><span class="nav-number">1.</span> <span class="nav-text">自定义驱动 Driver</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#说明"><span class="nav-number">1.1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计要求"><span class="nav-number">1.2.</span> <span class="nav-text">设计要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具体实现"><span class="nav-number">1.3.</span> <span class="nav-text">具体实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#驱动定义"><span class="nav-number">1.3.1.</span> <span class="nav-text">驱动定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#验证结果"><span class="nav-number">1.3.2.</span> <span class="nav-text">验证结果</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
