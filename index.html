@@ -80,14 +80,14 @@
 
 <meta name="description" content="主要做学习笔记，也记录一些想法">
 <meta property="og:type" content="website">
-<meta property="og:title" content="分类">
-<meta property="og:url" content="http://tao.github.io/categories/index.html">
+<meta property="og:title" content="记忆碎片">
+<meta property="og:url" content="http://tao.github.io/tags/index.html">
 <meta property="og:site_name" content="涛的世界线">
 <meta property="og:description" content="主要做学习笔记，也记录一些想法">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-18T08:59:33.003Z">
+<meta property="og:updated_time" content="2018-01-18T08:52:09.609Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="分类">
+<meta name="twitter:title" content="记忆碎片">
 <meta name="twitter:description" content="主要做学习笔记，也记录一些想法">
 
 
@@ -116,7 +116,7 @@
 
 
 
-  <link rel="canonical" href="http://tao.github.io/categories/"/>
+  <link rel="canonical" href="http://tao.github.io/tags/"/>
 
 
 
@@ -250,6 +250,208 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/02/05/Faster-RCNN移植到PYNQ/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李一涛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/05/Faster-RCNN移植到PYNQ/" itemprop="url">Faster-RCNN移植到PYNQ</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-05T09:40:28+08:00">2018-02-05</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="整体思路"><a href="#整体思路" class="headerlink" title="整体思路"></a>整体思路</h2><ol>
+<li>安装依赖库，主要openCV和caffe，因为openCV没有用到计算的函数，直接用pip的软件包，caffe的话到时要全改成FPGA的，这里还是移植了caffe的</li>
+<li>主体程序放到DAC/Python里，目标检测程序参考demo.py修改到Su.ipynb中（关键是调用im_detect），python2改成python3。</li>
+<li>修改对应的图片路径，并把输出改成比赛的要求，参考Su.ipynb。<blockquote>
+<p>注意这里的caffe是Faster-RCNN自带的caffe，有特殊的层，在caffe-fast-rcnn下，需要编译</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="编译caffe"><a href="#编译caffe" class="headerlink" title="编译caffe"></a>编译caffe</h2><h3 id="安装依赖库"><a href="#安装依赖库" class="headerlink" title="安装依赖库"></a>安装依赖库</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev protobuf-compiler</span><br><span class="line">sudo apt-get install --no-install-recommends libboost-all-dev</span><br><span class="line">sudo apt-get install libgflags-dev libgoogle-glog-dev liblmdb-dev</span><br><span class="line">sudo apt-get install libatlas-base-dev</span><br></pre></td></tr></table></figure>
+<p>因为PYNQ板子镜像是ubuntu15.10wily系统，处理器架构是armhf，现在已经不提供支持了（各种404 Not Found），就要换apt的源。找了好久发现<a href="http://old-releases.ubuntu.com" target="_blank" rel="noopener">http://old-releases.ubuntu.com</a>，ubuntu的旧版本库可以用。</p>
+<h4 id="替换源"><a href="#替换源" class="headerlink" title="替换源"></a>替换源</h4><p>/etc/apt/sources.list.d/目录下面，又list文件，<code>deb</code>，<code>deb-src</code>两个前面改成<a href="http://old-releases/ubuntu，即可以替换成新的源。" target="_blank" rel="noopener">http://old-releases/ubuntu，即可以替换成新的源。</a></p>
+<blockquote>
+<p>网上很多教程说是/etc/apt/目录下的sources.list文件，但是找不到这个文件，不知道怎么回事。</p>
+</blockquote>
+<p>替换完源后直接安装还会又<code>unable to locate package</code>得错误，因为没有应用新的源，执行<code>sudo apt-get update</code>就可以正常安装了。</p>
+<h3 id="Makefile-config"><a href="#Makefile-config" class="headerlink" title="Makefile.config"></a>Makefile.config</h3><p>复制Makefile.config.example重命名为Makefile.config，再修改配置参数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">make all -j2</span><br><span class="line">make test </span><br><span class="line">make runtest</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>-j2表示用两个核来编译，因为只有两个</p>
+</blockquote>
+<h4 id="遇到的错误"><a href="#遇到的错误" class="headerlink" title="遇到的错误"></a>遇到的错误</h4><blockquote>
+<p>Makefile:563: recipe for target ‘.build_release/src/caffe/util/hdf5.o’ failed</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INCLUDE_DIRS := $(PYTHON_INCLUDE) /usr/local/include /usr/include/hdf5/serial</span><br><span class="line">LIBRARY_DIRS := $(PYTHON_LIB) /usr/local/lib /usr/lib /usr/lib/arm-linux-gnueabihf/hdf5/serial /usr/lib/arm-linux-gnueabihf/hdf5</span><br></pre></td></tr></table></figure>
+<p>因为这是arm核的，PC可以是64位或x86什么的。</p>
+<blockquote>
+<p>/usr/bin/ld: cannot find -lopencv_imgcodecs  </p>
+</blockquote>
+<p>opencv版本弄错了，<code>OPENCV_VERSION := 2</code>，我是2.4.9改成2。</p>
+<blockquote>
+<p>/usr/bin/ld: cannot find -lboost_python3</p>
+</blockquote>
+<p>boost_python是C++和python的接口，在/usr/lib/arm-linux-gnueabihf目录下找libboost_python3.so，发现只有libboost_python-py34.so，所以修改Makefile下的<br><code>PYTHON_LIBRARIES := boost_python3</code><br>为<br><code>PYTHON_LIBRARIES := boost_python-py34</code></p>
+<blockquote>
+<p>make test遇到错误<br>src/caffe/test/test_smooth_L1_loss_layer.cpp:11:35: fatal error: caffe/vision_layers.hpp: 没有那个文件或目录<br>compilation terminated.<br>Makefile:563: recipe for target ‘.build_release/src/caffe/test/test_smooth_L1_loss_layer.o’ failed</p>
+</blockquote>
+<ul>
+<li>找到 <code>caffe-fast-rcnn/src/caffe/test/test_smooth_L1_loss_layer.cpp</code>，将里面的<code>#include &quot;caffe/vision_layers.hpp&quot;</code>注释掉  </li>
+<li>找到 <code>caffe-fast-rcnn/src/caffe/test/test_smooth_L1_loss_layer.cpp</code> 和 <code>caffe-fast-rcnn/src/caffe/test/test_roi_pooling_layer.cpp</code>，去掉最前面的<code>typedef ::testing::Types&lt;GPUDevice&lt;float&gt;, GPUDevice&lt;double&gt; &gt; TestDtypesGPU;</code>，并将 <code>TestDtypesGPU</code>改为 <code>TestDtypesAndDevices</code>。<br>因为是用CPU版本，找的好辛苦。</li>
+</ul>
+<h4 id="最后的Makefile-config"><a href="#最后的Makefile-config" class="headerlink" title="最后的Makefile.config"></a>最后的Makefile.config</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line">## Refer to http://caffe.berkeleyvision.org/installation.html</span><br><span class="line"># Contributions simplifying and improving our build system are welcome!</span><br><span class="line"></span><br><span class="line"># cuDNN acceleration switch (uncomment to build with cuDNN).</span><br><span class="line"># USE_CUDNN := 1</span><br><span class="line"></span><br><span class="line"># CPU-only switch (uncomment to build without GPU support).</span><br><span class="line"># 选择CPU模式</span><br><span class="line">CPU_ONLY := 1</span><br><span class="line"></span><br><span class="line"># uncomment to disable IO dependencies and corresponding data layers</span><br><span class="line"># USE_OPENCV := 0</span><br><span class="line"># USE_LEVELDB := 0</span><br><span class="line"># USE_LMDB := 0</span><br><span class="line"></span><br><span class="line"># uncomment to allow MDB_NOLOCK when reading LMDB files (only if necessary)</span><br><span class="line">#	You should not set this flag if you will be reading LMDBs with any</span><br><span class="line">#	possibility of simultaneous read and write</span><br><span class="line"># ALLOW_LMDB_NOLOCK := 1</span><br><span class="line"></span><br><span class="line"># Uncomment if you&apos;re using OpenCV 3</span><br><span class="line"># opencv版本</span><br><span class="line">OPENCV_VERSION := 2</span><br><span class="line">#USE_OPENCV := 1</span><br><span class="line"></span><br><span class="line"># To customize your choice of compiler, uncomment and set the following.</span><br><span class="line"># N.B. the default for Linux is g++ and the default for OSX is clang++</span><br><span class="line"># CUSTOM_CXX := g++</span><br><span class="line"></span><br><span class="line"># CUDA directory contains bin/ and lib/ directories that we need.</span><br><span class="line">CUDA_DIR := /usr/local/cuda</span><br><span class="line"># On Ubuntu 14.04, if cuda tools are installed via</span><br><span class="line"># &quot;sudo apt-get install nvidia-cuda-toolkit&quot; then use this instead:</span><br><span class="line"># CUDA_DIR := /usr</span><br><span class="line"></span><br><span class="line"># CUDA architecture setting: going with all of them.</span><br><span class="line"># For CUDA &lt; 6.0, comment the *_50 lines for compatibility.</span><br><span class="line">#CUDA_ARCH := -gencode arch=compute_20,code=sm_20 \</span><br><span class="line">#		-gencode arch=compute_20,code=sm_21 \</span><br><span class="line">#		-gencode arch=compute_30,code=sm_30 \</span><br><span class="line">#		-gencode arch=compute_35,code=sm_35 \</span><br><span class="line">#		-gencode arch=compute_50,code=sm_50 \</span><br><span class="line">#		-gencode arch=compute_50,code=compute_50</span><br><span class="line"></span><br><span class="line"># BLAS choice:</span><br><span class="line"># atlas for ATLAS (default)</span><br><span class="line"># mkl for MKL</span><br><span class="line"># open for OpenBlas</span><br><span class="line"># BLAS选择为atlas，要安装</span><br><span class="line">BLAS := atlas</span><br><span class="line"># Custom (MKL/ATLAS/OpenBLAS) include and lib directories.</span><br><span class="line"># Leave commented to accept the defaults for your choice of BLAS</span><br><span class="line"># (which should work)!</span><br><span class="line"># BLAS_INCLUDE := /usr/include/atlas-x86_64-base</span><br><span class="line"># BLAS_LIB := /usr/lib64/atlas</span><br><span class="line"></span><br><span class="line"># Homebrew puts openblas in a directory that is not on the standard search path</span><br><span class="line"># BLAS_INCLUDE := $(shell brew --prefix openblas)/include</span><br><span class="line"># BLAS_LIB := $(shell brew --prefix openblas)/lib</span><br><span class="line"></span><br><span class="line"># This is required only if you will compile the matlab interface.</span><br><span class="line"># MATLAB directory should contain the mex binary in /bin.</span><br><span class="line"># MATLAB_DIR := /usr/local</span><br><span class="line"># MATLAB_DIR := /Applications/MATLAB_R2012b.app</span><br><span class="line"></span><br><span class="line"># NOTE: this is required only if you will compile the python interface.</span><br><span class="line"># We need to be able to find Python.h and numpy/arrayobject.h.</span><br><span class="line">#PYTHON_INCLUDE := /usr/include/python2.7 \</span><br><span class="line">#		/usr/lib/python2.7/dist-packages/numpy/core/include</span><br><span class="line"># Anaconda Python distribution is quite popular. Include path:</span><br><span class="line"># Verify anaconda location, sometimes it&apos;s in root.</span><br><span class="line"># ANACONDA_HOME := $(HOME)/anaconda</span><br><span class="line"># PYTHON_INCLUDE := $(ANACONDA_HOME)/include \</span><br><span class="line">		# $(ANACONDA_HOME)/include/python2.7 \</span><br><span class="line">		# $(ANACONDA_HOME)/lib/python2.7/site-packages/numpy/core/include \</span><br><span class="line"></span><br><span class="line"># Uncomment to use Python 3 (default is Python 2)</span><br><span class="line"># 库路径和头文件路径，include要包含Python.h和numpy/arrayobject.h</span><br><span class="line"> PYTHON_LIBRARIES := boost_python-py34 python3.4</span><br><span class="line"> PYTHON_INCLUDE := /usr/include/python3.4 \</span><br><span class="line"> 				 /usr/include \</span><br><span class="line">                 /usr/lib/python3.4/dist-packages/numpy/core/include</span><br><span class="line"></span><br><span class="line"># We need to be able to find libpythonX.X.so or .dylib.</span><br><span class="line">PYTHON_LIB := /usr/lib/python3.4/config-3.4m-arm-linux-gnueabihf</span><br><span class="line"># PYTHON_LIB := $(ANACONDA_HOME)/lib</span><br><span class="line"></span><br><span class="line"># Homebrew installs numpy in a non standard path (keg only)</span><br><span class="line"># PYTHON_INCLUDE += $(dir $(shell python -c &apos;import numpy.core; print(numpy.core.__file__)&apos;))/include</span><br><span class="line"># PYTHON_LIB += $(shell brew --prefix numpy)/lib</span><br><span class="line"></span><br><span class="line"># Uncomment to support layers written in Python (will link against Python libs)</span><br><span class="line"> WITH_PYTHON_LAYER := 1</span><br><span class="line"></span><br><span class="line"># Whatever else you find you need goes here.</span><br><span class="line"># 其他需要的路径，注意要加入hdf5的路径</span><br><span class="line">INCLUDE_DIRS := $(PYTHON_INCLUDE) /usr/local/include /usr/include/hdf5/serial</span><br><span class="line">LIBRARY_DIRS := $(PYTHON_LIB) /usr/local/lib /usr/lib /usr/lib/arm-linux-gnueabihf/hdf5/serial /usr/lib/arm-linux-gnueabihf/hdf5</span><br><span class="line"></span><br><span class="line"># If Homebrew is installed at a non standard location (for example your home directory) and you use it for general dependencies</span><br><span class="line"># INCLUDE_DIRS += $(shell brew --prefix)/include</span><br><span class="line"># LIBRARY_DIRS += $(shell brew --prefix)/lib</span><br><span class="line"></span><br><span class="line"># Uncomment to use `pkg-config` to specify OpenCV library paths.</span><br><span class="line"># (Usually not necessary -- OpenCV libraries are normally installed in one of the above $LIBRARY_DIRS.)</span><br><span class="line"># USE_PKG_CONFIG := 1</span><br><span class="line"></span><br><span class="line">BUILD_DIR := build</span><br><span class="line">DISTRIBUTE_DIR := distribute</span><br><span class="line"></span><br><span class="line"># Uncomment for debugging. Does not work on OSX due to https://github.com/BVLC/caffe/issues/171</span><br><span class="line"># DEBUG := 1</span><br><span class="line"></span><br><span class="line"># The ID of the GPU that &apos;make runtest&apos; will use to run unit tests.</span><br><span class="line">TEST_GPUID := 0</span><br><span class="line"></span><br><span class="line"># enable pretty build (comment to see full commands)</span><br><span class="line">Q ?= @</span><br></pre></td></tr></table></figure>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>PYNQ里的python版本比较特殊，系统级/usr目录下有python2.7和python3.4但是什么包都没有，pip也没有，用户级/opt目录下有python3.6，是jupyter用的python版本，之前是想安装再python3.6里，一直失败，最后安装再python2.7上成功了，连boost_python的库都不需要了。</p>
+<h3 id="编译Python接口"><a href="#编译Python接口" class="headerlink" title="编译Python接口"></a>编译Python接口</h3><p>在caffe根目录的python文件夹下，有一个requirements.txt的清单文件，上面列出了需要的依赖库，按照这个清单安装就可以了。  </p>
+<h4 id="安装依赖库-1"><a href="#安装依赖库-1" class="headerlink" title="安装依赖库"></a>安装依赖库</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install -r python/requirements.txt</span><br></pre></td></tr></table></figure>
+<p>就会看到，安装成功的，都会显示Requirement already satisfied, 没有安装成功的，会继续安装。</p>
+<blockquote>
+<p>pip安装包非常慢，不是下载时慢，是setup.py时很慢，一度怀疑卡住了，后来挂在这里一个晚上，把所有的包装好了</p>
+</blockquote>
+<h4 id="pycaffe"><a href="#pycaffe" class="headerlink" title="pycaffe"></a>pycaffe</h4><p>在caffe根目录执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make pycaffe</span><br></pre></td></tr></table></figure></p>
+<h2 id="配置py-faster-rcnn"><a href="#配置py-faster-rcnn" class="headerlink" title="配置py-faster-rcnn"></a>配置py-faster-rcnn</h2><ol>
+<li><p>将 ~/py-faster-rcnn/lib/fast_rcnn/config.py的如下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">205 _C.USE_GPU_NMS = False</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 ~/py-faster-rcnn/tools/test_net.py和 ~/py-faster-rcnn/tools/train_net.py的caffe.set_mode_gpu()修改为caffe.set_mode_cpu().</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">80 #caffe.set_mode_gpu()</span><br><span class="line">81 caffe.set_mode_cpu()</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">101 #caffe.set_mode_gpu()</span><br><span class="line">102 caffe.set_mode_cpu()</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>将~/py-faster-rcnn/lib/setup.py中，含有’nms.gpu_nms’的部分去掉，去掉后的内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">112 ext_modules = [</span><br><span class="line">113     Extension(</span><br><span class="line">114         &quot;utils.cython_bbox&quot;,</span><br><span class="line">115         [&quot;utils/bbox.pyx&quot;],</span><br><span class="line">116         extra_compile_args=&#123;&apos;gcc&apos;: [&quot;-Wno-cpp&quot;, &quot;-Wno-unused-function&quot;]&#125;,</span><br><span class="line">117         include_dirs = [numpy_include]</span><br><span class="line">118     ),</span><br><span class="line">119     Extension(</span><br><span class="line">120         &quot;nms.cpu_nms&quot;,</span><br><span class="line">121         [&quot;nms/cpu_nms.pyx&quot;],</span><br><span class="line">122         extra_compile_args=&#123;&apos;gcc&apos;: [&quot;-Wno-cpp&quot;, &quot;-Wno-unused-function&quot;]&#125;,</span><br><span class="line">123         include_dirs = [numpy_include]</span><br><span class="line">124     ),</span><br><span class="line">125     Extension(</span><br><span class="line">126         &apos;pycocotools._mask&apos;,</span><br><span class="line">127         sources=[&apos;pycocotools/maskApi.c&apos;, &apos;pycocotools/_mask.pyx&apos;],</span><br><span class="line">128         include_dirs = [numpy_include, &apos;pycocotools&apos;],</span><br><span class="line">129         extra_compile_args=&#123;</span><br><span class="line">130             &apos;gcc&apos;: [&apos;-Wno-cpp&apos;, &apos;-Wno-unused-function&apos;, &apos;-std=c99&apos;]&#125;,</span><br><span class="line">131     ),</span><br><span class="line">132 ]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>还需要将~/lib/fast_rcnn/nms_wrapper.py的gpu_nms注释掉</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">9  #from nms.gpu_nms import gpu_nms</span><br><span class="line">10 from nms.cpu_nms import cpu_nms</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="遇到错误"><a href="#遇到错误" class="headerlink" title="遇到错误"></a>遇到错误</h4><blockquote>
+<p>from nms.cpu_nms import cpu_nms失败</p>
+</blockquote>
+<p>因为cpu_nms.pyx导入有问题，新建一个cpu_nms.py，写入如下内容。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mymax</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> a <span class="keyword">if</span> a &gt;= b <span class="keyword">else</span> b</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mymin</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> a <span class="keyword">if</span> a &lt;= b <span class="keyword">else</span> b</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cpu_nms</span><span class="params">(dets, thresh)</span>:</span></span><br><span class="line">    x1 = dets[:, <span class="number">0</span>]</span><br><span class="line">    y1 = dets[:, <span class="number">1</span>]</span><br><span class="line">    x2 = dets[:, <span class="number">2</span>]</span><br><span class="line">    y2 = dets[:, <span class="number">3</span>]</span><br><span class="line">    scores = dets[:, <span class="number">4</span>]</span><br><span class="line">    areas = (x2 - x1 + <span class="number">1</span>) * (y2 - y1 + <span class="number">1</span>)</span><br><span class="line">    order = scores.argsort()[::<span class="number">-1</span>]</span><br><span class="line">    ndets = dets.shape[<span class="number">0</span>]</span><br><span class="line">    suppressed = np.zeros((ndets), dtype=np.int)</span><br><span class="line">    keep = []</span><br><span class="line">    <span class="keyword">for</span> _i <span class="keyword">in</span> range(ndets):</span><br><span class="line">        i = order[_i]</span><br><span class="line">        <span class="keyword">if</span> suppressed[i] == <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        keep.append(i)</span><br><span class="line">        ix1 = x1[i]</span><br><span class="line">        iy1 = y1[i]</span><br><span class="line">        ix2 = x2[i]</span><br><span class="line">        iy2 = y2[i]</span><br><span class="line">        iarea = areas[i]</span><br><span class="line">        <span class="keyword">for</span> _j <span class="keyword">in</span> range(_i + <span class="number">1</span>, ndets):</span><br><span class="line">            j = order[_j]</span><br><span class="line">            <span class="keyword">if</span> suppressed[j] == <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            xx1 = mymax(ix1, x1[j])</span><br><span class="line">            yy1 = mymax(iy1, y1[j])</span><br><span class="line">            xx2 = mymin(ix2, x2[j])</span><br><span class="line">            yy2 = mymin(iy2, y2[j])</span><br><span class="line">            w = mymax(<span class="number">0.0</span>, xx2 - xx1 + <span class="number">1</span>)</span><br><span class="line">            h = mymax(<span class="number">0.0</span>, yy2 - yy1 + <span class="number">1</span>)</span><br><span class="line">            inter = w * h</span><br><span class="line">            ovr = inter / (iarea + areas[j] - inter)</span><br><span class="line">            <span class="keyword">if</span> ovr &gt;= thresh:</span><br><span class="line">                suppressed[j] = <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> keep</span><br></pre></td></tr></table></figure></p>
+<h2 id="运行demo-py"><a href="#运行demo-py" class="headerlink" title="运行demo.py"></a>运行demo.py</h2><h3 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python demo.py --cpu</span><br></pre></td></tr></table></figure>
+<p>或者<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./demo.py --cpu</span><br></pre></td></tr></table></figure></p>
+<h3 id="遇到问题"><a href="#遇到问题" class="headerlink" title="遇到问题"></a>遇到问题</h3><blockquote>
+<p>如有中文注释会出错</p>
+</blockquote>
+<p>要在程序开头添加<code># -*- coding: utf-8 -*-</code>转换编码方式。</p>
+<blockquote>
+<p>./demo.py运行怎么选择python的版本</p>
+</blockquote>
+<p>在开头添加<code>#!/usr/bin/python2.7</code>，选到对应版本的python目录。</p>
+<blockquote>
+<p>permission denied</p>
+</blockquote>
+<p>权限不够，切换到root权限，用<code>chmod 777 demo.py</code>设置一下权限即可。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1820,356 +2022,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/18/Markdown语法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="李一涛">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="涛的世界线">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/18/Markdown语法/" itemprop="url">Markdown语法</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-18T16:53:33+08:00">2018-01-18</time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><p>Markdown 支持两种标题的语法，Setext 和 atx 形式。</p>
-<ul>
-<li>Setext ：底线形式，利用 = (最高阶)和 - (第二阶)，</li>
-<li>Atx ：行首插入 1 到 6 个 # ，对应到标题 1 到 6 阶。</li>
-</ul>
-<h3 id="修辞和强调"><a href="#修辞和强调" class="headerlink" title="修辞和强调"></a>修辞和强调</h3><ul>
-<li><em>斜体</em>: <code>* *</code></li>
-<li><strong>加粗</strong>: <code>** **</code></li>
-<li><del>删除线</del>: <code>~~ ~~</code></li>
-</ul>
-<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><p>在文本前加入 <code>&gt;</code> (大于号)</p>
-<blockquote>
-<p>这里是引用</p>
-</blockquote>
-<h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><ol>
-<li><em>无序列表</em>: <code>*、+、-</code></li>
-<li><em>有序列表</em>: 数字. </li>
-</ol>
-<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><ul>
-<li>图片：<code>![]()</code></li>
-<li>链接：<code>[]()</code></li>
-</ul>
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p><code>int n = 0;</code><br>代码框：用 <code>扩起来  
-代码块：上下加三个</code></p>
-<h3 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">| Table1 | Table2 | Table3 |</span><br><span class="line">| ------ | ------ | ------ |</span><br><span class="line">| 1      | 2      | 3      |</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>Table1</th>
-<th>Table2</th>
-<th>Table3</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>2</td>
-<td>3</td>
-</tr>
-</tbody>
-</table>
-<h3 id="换行"><a href="#换行" class="headerlink" title="换行"></a>换行</h3><p>末尾敲两个空格再回车</p>
-<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><p>三个<code>*</code>号</p>
-<hr>
-<h2 id="数学公式-Latex-语法"><a href="#数学公式-Latex-语法" class="headerlink" title="数学公式 Latex 语法"></a>数学公式 Latex 语法</h2><ul>
-<li>行内公式：单美元符号包围$ $</li>
-<li>块公式：双美元符号包围$$ $$</li>
-</ul>
-<h3 id="上下标"><a href="#上下标" class="headerlink" title="上下标"></a>上下标</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$y^2$</td>
-<td>y^2</td>
-</tr>
-<tr>
-<td>$x_2$</td>
-<td>x_2</td>
-</tr>
-</tbody>
-</table>
-<h3 id="分数"><a href="#分数" class="headerlink" title="分数"></a>分数</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\frac{x}{y}$</td>
-<td>\frac{x}{y}</td>
-</tr>
-</tbody>
-</table>
-<h3 id="开根号"><a href="#开根号" class="headerlink" title="开根号"></a>开根号</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\sqrt{x}$</td>
-<td>\sqrt{x}</td>
-</tr>
-<tr>
-<td>$\sqrt[n]{x}$</td>
-<td>\sqrt[n]{x}</td>
-</tr>
-</tbody>
-</table>
-<h3 id="矢量"><a href="#矢量" class="headerlink" title="矢量"></a>矢量</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\vec{a}$</td>
-<td>\vec{a}</td>
-</tr>
-</tbody>
-</table>
-<h3 id="积分"><a href="#积分" class="headerlink" title="积分"></a>积分</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\int^2_3{\rm d}x$</td>
-<td>\int^2_3{\rm d}x</td>
-</tr>
-</tbody>
-</table>
-<h3 id="极限"><a href="#极限" class="headerlink" title="极限"></a>极限</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\lim_{n\rightarrow\infty}$</td>
-<td>lim_{n\rightarrow\infty}</td>
-</tr>
-</tbody>
-</table>
-<h3 id="累加、累乘"><a href="#累加、累乘" class="headerlink" title="累加、累乘"></a>累加、累乘</h3><table>
-<thead>
-<tr>
-<th>公式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\sum$</td>
-<td>\sum</td>
-</tr>
-<tr>
-<td>$\prod$</td>
-<td>\prod</td>
-</tr>
-</tbody>
-</table>
-<h3 id="希腊字母"><a href="#希腊字母" class="headerlink" title="希腊字母"></a>希腊字母</h3><table>
-<thead>
-<tr>
-<th>大写</th>
-<th>markdown</th>
-<th>小写</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$A$</td>
-<td>A</td>
-<td>$\alpha$</td>
-<td>\alpha</td>
-</tr>
-<tr>
-<td>$B$</td>
-<td>B</td>
-<td>$\beta$</td>
-<td>\beta</td>
-</tr>
-<tr>
-<td>$\Gamma$</td>
-<td>\Gamma</td>
-<td>$\gamma$</td>
-<td>\gamma</td>
-</tr>
-<tr>
-<td>$\Delta$</td>
-<td>\Delta</td>
-<td>$\delta$</td>
-<td>\delta</td>
-</tr>
-<tr>
-<td>待续未完</td>
-</tr>
-</tbody>
-</table>
-<h3 id="关系运算符"><a href="#关系运算符" class="headerlink" title="关系运算符"></a>关系运算符</h3><table>
-<thead>
-<tr>
-<th>运算符</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$\pm$</td>
-<td>\pm</td>
-</tr>
-<tr>
-<td>$\times$</td>
-<td>\times</td>
-</tr>
-<tr>
-<td>$\div$</td>
-<td>\div</td>
-</tr>
-<tr>
-<td>$\neq$</td>
-<td>\neq</td>
-</tr>
-<tr>
-<td>$\leq$</td>
-<td>\leq</td>
-</tr>
-<tr>
-<td>$\geq$</td>
-<td>\geq</td>
-</tr>
-</tbody>
-</table>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2221,7 +2073,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-count">12</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2234,7 +2086,7 @@
                 
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
-                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-count">4</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
