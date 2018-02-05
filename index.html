@@ -44,6 +44,33 @@
 
 
 
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
 
 
 
@@ -230,9 +257,40 @@
       
 
       
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
     </ul>
   
 
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
   
 </nav>
 
@@ -334,18 +392,14 @@
 
       
         
-          
-            <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Caffe使用成为Blob的4维数组用于存储和交换数据。Blob提供了统一的存储器接口，持有一批图像或者其他数据，权值，权值更新值。<br>Blob在内存中表示4维数组，维度从低到高为<code>(width_,height_,channels_,num_)</code>  四个维度分别表示，（宽，长，通道数，图像数）。</p>
-<h3 id="例子：Feature-Map"><a href="#例子：Feature-Map" class="headerlink" title="例子：Feature Map"></a>例子：Feature Map</h3><p>例如(224,224,3,2)<br>就表示两个张图，每张图有RGB三通道，每张图片的大小是224*224。<br>同样，卷积核也是这样表示的</p>
-<h3 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h3><p>Blob是保存为一维数组的，存储方式是</p>
-<ol>
-<li>行</li>
-<li>列</li>
-<li>通道</li>
-<li>图像<br>就是一行一行取出来拍成一维数组，取完一个通道的添加通道，取完一张图的添加图。<br><img src="/2018/02/05/caffe-Blob/Blob.png" alt="image"></li>
-</ol>
-
-          
+          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Caffe使用成为Blob的4维数组用于存储和交换数据。Blob提供了统一的存储器接口，持有一批图像或者其他数据，权值，权值更新值。<br>Blob在内存中表示4维数组，维度从低到高为<code>(width_,height_,channels_,num_)</code>  四个维度分别表示，（宽，长，通道数，图像数）。<br></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/02/05/caffe-Blob/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -462,8 +516,7 @@
 
       
         
-          
-            <h2 id="整体思路"><a href="#整体思路" class="headerlink" title="整体思路"></a>整体思路</h2><ol>
+          <h2 id="整体思路"><a href="#整体思路" class="headerlink" title="整体思路"></a>整体思路</h2><ol>
 <li>安装依赖库，主要openCV和caffe，因为openCV没有用到计算的函数，直接用pip的软件包，caffe的话到时要全改成FPGA的，这里还是移植了caffe的</li>
 <li>主体程序放到DAC/Python里，目标检测程序参考demo.py修改到Su.ipynb中（关键是调用im_detect），python2改成python3。</li>
 <li>修改对应的图片路径，并把输出改成比赛的要求，参考Su.ipynb。<blockquote>
@@ -471,83 +524,13 @@
 </blockquote>
 </li>
 </ol>
-<h2 id="编译caffe"><a href="#编译caffe" class="headerlink" title="编译caffe"></a>编译caffe</h2><h3 id="安装依赖库"><a href="#安装依赖库" class="headerlink" title="安装依赖库"></a>安装依赖库</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev protobuf-compiler</span><br><span class="line">sudo apt-get install --no-install-recommends libboost-all-dev</span><br><span class="line">sudo apt-get install libgflags-dev libgoogle-glog-dev liblmdb-dev</span><br><span class="line">sudo apt-get install libatlas-base-dev</span><br></pre></td></tr></table></figure>
-<p>因为PYNQ板子镜像是ubuntu15.10wily系统，处理器架构是armhf，现在已经不提供支持了（各种404 Not Found），就要换apt的源。找了好久发现<a href="http://old-releases.ubuntu.com" target="_blank" rel="noopener">http://old-releases.ubuntu.com</a>，ubuntu的旧版本库可以用。</p>
-<h4 id="替换源"><a href="#替换源" class="headerlink" title="替换源"></a>替换源</h4><p>/etc/apt/sources.list.d/目录下面，又list文件，<code>deb</code>，<code>deb-src</code>两个前面改成<a href="http://old-releases/ubuntu，即可以替换成新的源。" target="_blank" rel="noopener">http://old-releases/ubuntu，即可以替换成新的源。</a></p>
-<blockquote>
-<p>网上很多教程说是/etc/apt/目录下的sources.list文件，但是找不到这个文件，不知道怎么回事。</p>
-</blockquote>
-<p>替换完源后直接安装还会又<code>unable to locate package</code>得错误，因为没有应用新的源，执行<code>sudo apt-get update</code>就可以正常安装了。</p>
-<h3 id="Makefile-config"><a href="#Makefile-config" class="headerlink" title="Makefile.config"></a>Makefile.config</h3><p>复制Makefile.config.example重命名为Makefile.config，再修改配置参数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">make all -j2</span><br><span class="line">make test </span><br><span class="line">make runtest</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>-j2表示用两个核来编译，因为只有两个</p>
-</blockquote>
-<h4 id="遇到的错误"><a href="#遇到的错误" class="headerlink" title="遇到的错误"></a>遇到的错误</h4><blockquote>
-<p>Makefile:563: recipe for target ‘.build_release/src/caffe/util/hdf5.o’ failed</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INCLUDE_DIRS := $(PYTHON_INCLUDE) /usr/local/include /usr/include/hdf5/serial</span><br><span class="line">LIBRARY_DIRS := $(PYTHON_LIB) /usr/local/lib /usr/lib /usr/lib/arm-linux-gnueabihf/hdf5/serial /usr/lib/arm-linux-gnueabihf/hdf5</span><br></pre></td></tr></table></figure>
-<p>因为这是arm核的，PC可以是64位或x86什么的。</p>
-<blockquote>
-<p>/usr/bin/ld: cannot find -lopencv_imgcodecs  </p>
-</blockquote>
-<p>opencv版本弄错了，<code>OPENCV_VERSION := 2</code>，我是2.4.9改成2。</p>
-<blockquote>
-<p>/usr/bin/ld: cannot find -lboost_python3</p>
-</blockquote>
-<p>boost_python是C++和python的接口，在/usr/lib/arm-linux-gnueabihf目录下找libboost_python3.so，发现只有libboost_python-py34.so，所以修改Makefile下的<br><code>PYTHON_LIBRARIES := boost_python3</code><br>为<br><code>PYTHON_LIBRARIES := boost_python-py34</code></p>
-<blockquote>
-<p>make test遇到错误<br>src/caffe/test/test_smooth_L1_loss_layer.cpp:11:35: fatal error: caffe/vision_layers.hpp: 没有那个文件或目录<br>compilation terminated.<br>Makefile:563: recipe for target ‘.build_release/src/caffe/test/test_smooth_L1_loss_layer.o’ failed</p>
-</blockquote>
-<ul>
-<li>找到 <code>caffe-fast-rcnn/src/caffe/test/test_smooth_L1_loss_layer.cpp</code>，将里面的<code>#include &quot;caffe/vision_layers.hpp&quot;</code>注释掉  </li>
-<li>找到 <code>caffe-fast-rcnn/src/caffe/test/test_smooth_L1_loss_layer.cpp</code> 和 <code>caffe-fast-rcnn/src/caffe/test/test_roi_pooling_layer.cpp</code>，去掉最前面的<code>typedef ::testing::Types&lt;GPUDevice&lt;float&gt;, GPUDevice&lt;double&gt; &gt; TestDtypesGPU;</code>，并将 <code>TestDtypesGPU</code>改为 <code>TestDtypesAndDevices</code>。<br>因为是用CPU版本，找的好辛苦。</li>
-</ul>
-<h4 id="最后的Makefile-config"><a href="#最后的Makefile-config" class="headerlink" title="最后的Makefile.config"></a>最后的Makefile.config</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line">## Refer to http://caffe.berkeleyvision.org/installation.html</span><br><span class="line"># Contributions simplifying and improving our build system are welcome!</span><br><span class="line"></span><br><span class="line"># cuDNN acceleration switch (uncomment to build with cuDNN).</span><br><span class="line"># USE_CUDNN := 1</span><br><span class="line"></span><br><span class="line"># CPU-only switch (uncomment to build without GPU support).</span><br><span class="line"># 选择CPU模式</span><br><span class="line">CPU_ONLY := 1</span><br><span class="line"></span><br><span class="line"># uncomment to disable IO dependencies and corresponding data layers</span><br><span class="line"># USE_OPENCV := 0</span><br><span class="line"># USE_LEVELDB := 0</span><br><span class="line"># USE_LMDB := 0</span><br><span class="line"></span><br><span class="line"># uncomment to allow MDB_NOLOCK when reading LMDB files (only if necessary)</span><br><span class="line">#	You should not set this flag if you will be reading LMDBs with any</span><br><span class="line">#	possibility of simultaneous read and write</span><br><span class="line"># ALLOW_LMDB_NOLOCK := 1</span><br><span class="line"></span><br><span class="line"># Uncomment if you&apos;re using OpenCV 3</span><br><span class="line"># opencv版本</span><br><span class="line">OPENCV_VERSION := 2</span><br><span class="line">#USE_OPENCV := 1</span><br><span class="line"></span><br><span class="line"># To customize your choice of compiler, uncomment and set the following.</span><br><span class="line"># N.B. the default for Linux is g++ and the default for OSX is clang++</span><br><span class="line"># CUSTOM_CXX := g++</span><br><span class="line"></span><br><span class="line"># CUDA directory contains bin/ and lib/ directories that we need.</span><br><span class="line">CUDA_DIR := /usr/local/cuda</span><br><span class="line"># On Ubuntu 14.04, if cuda tools are installed via</span><br><span class="line"># &quot;sudo apt-get install nvidia-cuda-toolkit&quot; then use this instead:</span><br><span class="line"># CUDA_DIR := /usr</span><br><span class="line"></span><br><span class="line"># CUDA architecture setting: going with all of them.</span><br><span class="line"># For CUDA &lt; 6.0, comment the *_50 lines for compatibility.</span><br><span class="line">#CUDA_ARCH := -gencode arch=compute_20,code=sm_20 \</span><br><span class="line">#		-gencode arch=compute_20,code=sm_21 \</span><br><span class="line">#		-gencode arch=compute_30,code=sm_30 \</span><br><span class="line">#		-gencode arch=compute_35,code=sm_35 \</span><br><span class="line">#		-gencode arch=compute_50,code=sm_50 \</span><br><span class="line">#		-gencode arch=compute_50,code=compute_50</span><br><span class="line"></span><br><span class="line"># BLAS choice:</span><br><span class="line"># atlas for ATLAS (default)</span><br><span class="line"># mkl for MKL</span><br><span class="line"># open for OpenBlas</span><br><span class="line"># BLAS选择为atlas，要安装</span><br><span class="line">BLAS := atlas</span><br><span class="line"># Custom (MKL/ATLAS/OpenBLAS) include and lib directories.</span><br><span class="line"># Leave commented to accept the defaults for your choice of BLAS</span><br><span class="line"># (which should work)!</span><br><span class="line"># BLAS_INCLUDE := /usr/include/atlas-x86_64-base</span><br><span class="line"># BLAS_LIB := /usr/lib64/atlas</span><br><span class="line"></span><br><span class="line"># Homebrew puts openblas in a directory that is not on the standard search path</span><br><span class="line"># BLAS_INCLUDE := $(shell brew --prefix openblas)/include</span><br><span class="line"># BLAS_LIB := $(shell brew --prefix openblas)/lib</span><br><span class="line"></span><br><span class="line"># This is required only if you will compile the matlab interface.</span><br><span class="line"># MATLAB directory should contain the mex binary in /bin.</span><br><span class="line"># MATLAB_DIR := /usr/local</span><br><span class="line"># MATLAB_DIR := /Applications/MATLAB_R2012b.app</span><br><span class="line"></span><br><span class="line"># NOTE: this is required only if you will compile the python interface.</span><br><span class="line"># We need to be able to find Python.h and numpy/arrayobject.h.</span><br><span class="line">#PYTHON_INCLUDE := /usr/include/python2.7 \</span><br><span class="line">#		/usr/lib/python2.7/dist-packages/numpy/core/include</span><br><span class="line"># Anaconda Python distribution is quite popular. Include path:</span><br><span class="line"># Verify anaconda location, sometimes it&apos;s in root.</span><br><span class="line"># ANACONDA_HOME := $(HOME)/anaconda</span><br><span class="line"># PYTHON_INCLUDE := $(ANACONDA_HOME)/include \</span><br><span class="line">		# $(ANACONDA_HOME)/include/python2.7 \</span><br><span class="line">		# $(ANACONDA_HOME)/lib/python2.7/site-packages/numpy/core/include \</span><br><span class="line"></span><br><span class="line"># Uncomment to use Python 3 (default is Python 2)</span><br><span class="line"># 库路径和头文件路径，include要包含Python.h和numpy/arrayobject.h</span><br><span class="line"> PYTHON_LIBRARIES := boost_python-py34 python3.4</span><br><span class="line"> PYTHON_INCLUDE := /usr/include/python3.4 \</span><br><span class="line"> 				 /usr/include \</span><br><span class="line">                 /usr/lib/python3.4/dist-packages/numpy/core/include</span><br><span class="line"></span><br><span class="line"># We need to be able to find libpythonX.X.so or .dylib.</span><br><span class="line">PYTHON_LIB := /usr/lib/python3.4/config-3.4m-arm-linux-gnueabihf</span><br><span class="line"># PYTHON_LIB := $(ANACONDA_HOME)/lib</span><br><span class="line"></span><br><span class="line"># Homebrew installs numpy in a non standard path (keg only)</span><br><span class="line"># PYTHON_INCLUDE += $(dir $(shell python -c &apos;import numpy.core; print(numpy.core.__file__)&apos;))/include</span><br><span class="line"># PYTHON_LIB += $(shell brew --prefix numpy)/lib</span><br><span class="line"></span><br><span class="line"># Uncomment to support layers written in Python (will link against Python libs)</span><br><span class="line"> WITH_PYTHON_LAYER := 1</span><br><span class="line"></span><br><span class="line"># Whatever else you find you need goes here.</span><br><span class="line"># 其他需要的路径，注意要加入hdf5的路径</span><br><span class="line">INCLUDE_DIRS := $(PYTHON_INCLUDE) /usr/local/include /usr/include/hdf5/serial</span><br><span class="line">LIBRARY_DIRS := $(PYTHON_LIB) /usr/local/lib /usr/lib /usr/lib/arm-linux-gnueabihf/hdf5/serial /usr/lib/arm-linux-gnueabihf/hdf5</span><br><span class="line"></span><br><span class="line"># If Homebrew is installed at a non standard location (for example your home directory) and you use it for general dependencies</span><br><span class="line"># INCLUDE_DIRS += $(shell brew --prefix)/include</span><br><span class="line"># LIBRARY_DIRS += $(shell brew --prefix)/lib</span><br><span class="line"></span><br><span class="line"># Uncomment to use `pkg-config` to specify OpenCV library paths.</span><br><span class="line"># (Usually not necessary -- OpenCV libraries are normally installed in one of the above $LIBRARY_DIRS.)</span><br><span class="line"># USE_PKG_CONFIG := 1</span><br><span class="line"></span><br><span class="line">BUILD_DIR := build</span><br><span class="line">DISTRIBUTE_DIR := distribute</span><br><span class="line"></span><br><span class="line"># Uncomment for debugging. Does not work on OSX due to https://github.com/BVLC/caffe/issues/171</span><br><span class="line"># DEBUG := 1</span><br><span class="line"></span><br><span class="line"># The ID of the GPU that &apos;make runtest&apos; will use to run unit tests.</span><br><span class="line">TEST_GPUID := 0</span><br><span class="line"></span><br><span class="line"># enable pretty build (comment to see full commands)</span><br><span class="line">Q ?= @</span><br></pre></td></tr></table></figure>
-<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>PYNQ里的python版本比较特殊，系统级/usr目录下有python2.7和python3.4但是什么包都没有，pip也没有，用户级/opt目录下有python3.6，是jupyter用的python版本，之前是想安装再python3.6里，一直失败，最后安装再python2.7上成功了，连boost_python的库都不需要了。</p>
-<h3 id="编译Python接口"><a href="#编译Python接口" class="headerlink" title="编译Python接口"></a>编译Python接口</h3><p>在caffe根目录的python文件夹下，有一个requirements.txt的清单文件，上面列出了需要的依赖库，按照这个清单安装就可以了。  </p>
-<h4 id="安装依赖库-1"><a href="#安装依赖库-1" class="headerlink" title="安装依赖库"></a>安装依赖库</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install -r python/requirements.txt</span><br></pre></td></tr></table></figure>
-<p>就会看到，安装成功的，都会显示Requirement already satisfied, 没有安装成功的，会继续安装。</p>
-<blockquote>
-<p>pip安装包非常慢，不是下载时慢，是setup.py时很慢，一度怀疑卡住了，后来挂在这里一个晚上，把所有的包装好了</p>
-</blockquote>
-<h4 id="pycaffe"><a href="#pycaffe" class="headerlink" title="pycaffe"></a>pycaffe</h4><p>在caffe根目录执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make pycaffe</span><br></pre></td></tr></table></figure></p>
-<h2 id="配置py-faster-rcnn"><a href="#配置py-faster-rcnn" class="headerlink" title="配置py-faster-rcnn"></a>配置py-faster-rcnn</h2><ol>
-<li><p>将 ~/py-faster-rcnn/lib/fast_rcnn/config.py的如下内容：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">205 _C.USE_GPU_NMS = False</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将 ~/py-faster-rcnn/tools/test_net.py和 ~/py-faster-rcnn/tools/train_net.py的caffe.set_mode_gpu()修改为caffe.set_mode_cpu().</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">80 #caffe.set_mode_gpu()</span><br><span class="line">81 caffe.set_mode_cpu()</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">101 #caffe.set_mode_gpu()</span><br><span class="line">102 caffe.set_mode_cpu()</span><br></pre></td></tr></table></figure>
-<ol>
-<li><p>将~/py-faster-rcnn/lib/setup.py中，含有’nms.gpu_nms’的部分去掉，去掉后的内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">112 ext_modules = [</span><br><span class="line">113     Extension(</span><br><span class="line">114         &quot;utils.cython_bbox&quot;,</span><br><span class="line">115         [&quot;utils/bbox.pyx&quot;],</span><br><span class="line">116         extra_compile_args=&#123;&apos;gcc&apos;: [&quot;-Wno-cpp&quot;, &quot;-Wno-unused-function&quot;]&#125;,</span><br><span class="line">117         include_dirs = [numpy_include]</span><br><span class="line">118     ),</span><br><span class="line">119     Extension(</span><br><span class="line">120         &quot;nms.cpu_nms&quot;,</span><br><span class="line">121         [&quot;nms/cpu_nms.pyx&quot;],</span><br><span class="line">122         extra_compile_args=&#123;&apos;gcc&apos;: [&quot;-Wno-cpp&quot;, &quot;-Wno-unused-function&quot;]&#125;,</span><br><span class="line">123         include_dirs = [numpy_include]</span><br><span class="line">124     ),</span><br><span class="line">125     Extension(</span><br><span class="line">126         &apos;pycocotools._mask&apos;,</span><br><span class="line">127         sources=[&apos;pycocotools/maskApi.c&apos;, &apos;pycocotools/_mask.pyx&apos;],</span><br><span class="line">128         include_dirs = [numpy_include, &apos;pycocotools&apos;],</span><br><span class="line">129         extra_compile_args=&#123;</span><br><span class="line">130             &apos;gcc&apos;: [&apos;-Wno-cpp&apos;, &apos;-Wno-unused-function&apos;, &apos;-std=c99&apos;]&#125;,</span><br><span class="line">131     ),</span><br><span class="line">132 ]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>还需要将~/lib/fast_rcnn/nms_wrapper.py的gpu_nms注释掉</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">9  #from nms.gpu_nms import gpu_nms</span><br><span class="line">10 from nms.cpu_nms import cpu_nms</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="遇到错误"><a href="#遇到错误" class="headerlink" title="遇到错误"></a>遇到错误</h4><blockquote>
-<p>from nms.cpu_nms import cpu_nms失败</p>
-</blockquote>
-<p>因为cpu_nms.pyx导入有问题，新建一个cpu_nms.py，写入如下内容。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mymax</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> a <span class="keyword">if</span> a &gt;= b <span class="keyword">else</span> b</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mymin</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> a <span class="keyword">if</span> a &lt;= b <span class="keyword">else</span> b</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cpu_nms</span><span class="params">(dets, thresh)</span>:</span></span><br><span class="line">    x1 = dets[:, <span class="number">0</span>]</span><br><span class="line">    y1 = dets[:, <span class="number">1</span>]</span><br><span class="line">    x2 = dets[:, <span class="number">2</span>]</span><br><span class="line">    y2 = dets[:, <span class="number">3</span>]</span><br><span class="line">    scores = dets[:, <span class="number">4</span>]</span><br><span class="line">    areas = (x2 - x1 + <span class="number">1</span>) * (y2 - y1 + <span class="number">1</span>)</span><br><span class="line">    order = scores.argsort()[::<span class="number">-1</span>]</span><br><span class="line">    ndets = dets.shape[<span class="number">0</span>]</span><br><span class="line">    suppressed = np.zeros((ndets), dtype=np.int)</span><br><span class="line">    keep = []</span><br><span class="line">    <span class="keyword">for</span> _i <span class="keyword">in</span> range(ndets):</span><br><span class="line">        i = order[_i]</span><br><span class="line">        <span class="keyword">if</span> suppressed[i] == <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        keep.append(i)</span><br><span class="line">        ix1 = x1[i]</span><br><span class="line">        iy1 = y1[i]</span><br><span class="line">        ix2 = x2[i]</span><br><span class="line">        iy2 = y2[i]</span><br><span class="line">        iarea = areas[i]</span><br><span class="line">        <span class="keyword">for</span> _j <span class="keyword">in</span> range(_i + <span class="number">1</span>, ndets):</span><br><span class="line">            j = order[_j]</span><br><span class="line">            <span class="keyword">if</span> suppressed[j] == <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            xx1 = mymax(ix1, x1[j])</span><br><span class="line">            yy1 = mymax(iy1, y1[j])</span><br><span class="line">            xx2 = mymin(ix2, x2[j])</span><br><span class="line">            yy2 = mymin(iy2, y2[j])</span><br><span class="line">            w = mymax(<span class="number">0.0</span>, xx2 - xx1 + <span class="number">1</span>)</span><br><span class="line">            h = mymax(<span class="number">0.0</span>, yy2 - yy1 + <span class="number">1</span>)</span><br><span class="line">            inter = w * h</span><br><span class="line">            ovr = inter / (iarea + areas[j] - inter)</span><br><span class="line">            <span class="keyword">if</span> ovr &gt;= thresh:</span><br><span class="line">                suppressed[j] = <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> keep</span><br></pre></td></tr></table></figure></p>
-<h2 id="运行demo-py"><a href="#运行demo-py" class="headerlink" title="运行demo.py"></a>运行demo.py</h2><h3 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python demo.py --cpu</span><br></pre></td></tr></table></figure>
-<p>或者<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./demo.py --cpu</span><br></pre></td></tr></table></figure></p>
-<h3 id="遇到问题"><a href="#遇到问题" class="headerlink" title="遇到问题"></a>遇到问题</h3><blockquote>
-<p>如有中文注释会出错</p>
-</blockquote>
-<p>要在程序开头添加<code># -*- coding: utf-8 -*-</code>转换编码方式。</p>
-<blockquote>
-<p>./demo.py运行怎么选择python的版本</p>
-</blockquote>
-<p>在开头添加<code>#!/usr/bin/python2.7</code>，选到对应版本的python目录。</p>
-<blockquote>
-<p>permission denied</p>
-</blockquote>
-<p>权限不够，切换到root权限，用<code>chmod 777 demo.py</code>设置一下权限即可。</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/02/05/Faster-RCNN移植到PYNQ/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -664,52 +647,14 @@
 
       
         
-          
-            <h2 id="overlay流程"><a href="#overlay流程" class="headerlink" title="overlay流程"></a>overlay流程</h2><p>通过比赛中dma的例子来分析<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">dma = overlay.axi_dma_0</span><br><span class="line"></span><br><span class="line">xlnk = Xlnk()</span><br><span class="line">in_buffer = xlnk.cma_array(shape=(<span class="number">4</span>,), dtype=np.uint32)</span><br><span class="line">out_buffer = xlnk.cma_array(shape=(<span class="number">4</span>,), dtype=np.uint32)</span><br><span class="line"></span><br><span class="line">dma.sendchannel.transfer(in_buffer)</span><br><span class="line">dma.recvchannel.transfer(out_buffer) </span><br><span class="line">dma.sendchannel.wait()</span><br><span class="line">dma.recvchannel.wait()</span><br></pre></td></tr></table></figure></p>
-<h3 id="1、加载overlay"><a href="#1、加载overlay" class="headerlink" title="1、加载overlay"></a>1、加载overlay</h3><p><code>overlay = Overlay(&#39;/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit&#39;)</code></p>
-<ol>
-<li>调用Overlay的init进行初始化，生成overlay对象。传入的是Su.bit的绝对路径。</li>
-<li><code>tcl = _TCL(_get_tcl_name(self.bitfile_name))</code><br> 获取该路径下同名的Su.tcl文件，根据_TCL类生成对象，就是对tcl解析。主要是根据tcl前面的关键字确定后面表示什么意思，会整理出ip_dict等字典（关键信息），具体只要对着代码一步步找。</li>
-<li><p>保存tcl中的ip_dict、gpio_dict、interrupt_controllers、interrupt_pins、hierarchy_dict、clock_dict为overlay的类属性，其中有一个dma的ip核，所以ip_dict中包含以下部分(这就是tcl获取的信息)</p>
- <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'axi_dma_0'</span>: &#123;<span class="string">'phys_addr'</span>: <span class="number">1077936128</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:ip:axi_dma:7.1'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'axi_dma_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">lib</span>.<span class="title">dma</span>.<span class="title">DMA</span>'&gt;&#125;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>根据ip_dict 和 hierarchy_dict建立_IPMap类对象，作为overlay._ip_map，这里的_IPMap起的作用就是把字典映射成类的属性，下面具体讲。</p>
-</li>
-</ol>
-<h3 id="2、用驱动生成IP对象"><a href="#2、用驱动生成IP对象" class="headerlink" title="2、用驱动生成IP对象"></a>2、用驱动生成IP对象</h3><p><code>dma = overlay.axi_dma_0</code>  </p>
-<ol>
-<li><p>就会调用overlay的getattr方法，</p>
- <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span><span class="params">(self, key)</span>:</span></span><br><span class="line">   <span class="keyword">if</span> self.is_loaded():</span><br><span class="line">       <span class="keyword">return</span> getattr(self._ip_map, key)</span><br><span class="line">   <span class="keyword">else</span>:</span><br><span class="line">       <span class="keyword">raise</span> RuntimeError(<span class="string">"Overlay not currently loaded"</span>)</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>getattr的功能是获取key对应的属性，这里重新定义了，变成获取overlay._ip_map的key属性，这样就会调用_IPMap的getattr。</p>
-</blockquote>
-</li>
-<li><p>进而调用_IPMap的getattr，</p>
- <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span><span class="params">(self, key)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> key <span class="keyword">in</span> self._description[<span class="string">'hierarchies'</span>]:</span><br><span class="line">        hierdescription = self._description[<span class="string">'hierarchies'</span>][key]</span><br><span class="line">        hierarchy = hierdescription[<span class="string">'driver'</span>](hierdescription)</span><br><span class="line">        setattr(self, key, hierarchy)</span><br><span class="line">        <span class="keyword">return</span> hierarchy</span><br><span class="line">    <span class="keyword">elif</span> key <span class="keyword">in</span> self._description[<span class="string">'ip'</span>]:</span><br><span class="line">        ipdescription = self._description[<span class="string">'ip'</span>][key]</span><br><span class="line">        driver = ipdescription[<span class="string">'driver'</span>](ipdescription)</span><br><span class="line">        setattr(self, key, driver)</span><br><span class="line">        <span class="keyword">return</span> driver</span><br><span class="line">    <span class="keyword">elif</span> key <span class="keyword">in</span> self._description[<span class="string">'interrupts'</span>]:</span><br><span class="line">        interrupt = Interrupt(</span><br><span class="line">            self._description[<span class="string">'interrupts'</span>][key][<span class="string">'fullpath'</span>])</span><br><span class="line">        setattr(self, key, interrupt)</span><br><span class="line">        <span class="keyword">return</span> interrupt</span><br><span class="line">    <span class="keyword">elif</span> key <span class="keyword">in</span> self._description[<span class="string">'gpio'</span>]:</span><br><span class="line">        gpio_index = self._description[<span class="string">'gpio'</span>][key][<span class="string">'index'</span>]</span><br><span class="line">        gpio_number = GPIO.get_gpio_pin(gpio_index)</span><br><span class="line">        gpio = GPIO(gpio_number, <span class="string">'out'</span>)</span><br><span class="line">        setattr(self, key, gpio)</span><br><span class="line">        <span class="keyword">return</span> gpio</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> AttributeError(</span><br><span class="line">            <span class="string">"Could not find IP or hierarchy &#123;&#125; in overlay"</span>.format(key))</span><br></pre></td></tr></table></figure>
-<p> 这里就是判断是属于哪一类的（这里的description是之前初始化_IPMap传入的ip_dict等的打包），比如dma是IP，就会对应获取驱动描述pynq.lib.dma.DMA(这里的驱动描述是ip_dict里的driver)，建立overlay._ip_map.axi_dma_0属性。</p>
-<blockquote>
-<p>setattr(object, name, values) 给对象的属性赋值，若属性不存在，先创建再赋值。</p>
-</blockquote>
-</li>
-<li><p>根据驱动描述pynq.lib.dma.DMA类（继承自DefaultIP）创建对应的ip驱动，既生成一个DMA类的对象，赋给overlay._ip_map.axi_dma_0属性，最后把该对象赋给dma，然后dma里通过mmio读写对应的寄存器控制和检测IP核axi_dma_0。</p>
-</li>
-</ol>
-<h3 id="3、自定义驱动"><a href="#3、自定义驱动" class="headerlink" title="3、自定义驱动"></a>3、自定义驱动</h3><ol>
-<li><p>其实这里的DMA类就是自定义驱动了，如果没有自定义驱动则用DefaultIP类做默认驱动，因此所有的自定义驱动都从DefaultIP继承。</p>
-<blockquote>
-<p>DefaultIP主要就是根据IP核的物理地址创建一个mmio类对象，然后封装了一个读和写函数，通过mmio读写寄存器(mmio就是把外围设备映射为内存地址就可以直接读写)</p>
-</blockquote>
-</li>
-<li><p>自定义驱动主要就是如何对应的问题，比如为什么能识别出axi_dma_0是DMA类的应该用driver：pynq.lib.dma.DMA（ip_dict中的driver不是tcl自带的，是解析时加上去的），其实是只要在自定义驱动类下加一句绑定，<code>bindto = [&#39;xilinx.com:ip:axi_dma:7.1&#39;]</code>  ，这样在tcl解析时就会判断IP核类型，为其加上驱动描述了。</p>
-<blockquote>
-<p><code>xilinx.com:ip:axi_dma:7.1</code>是ip_dict中的type，是tcl中描述每个IP核类型的值。</p>
-</blockquote>
-</li>
-</ol>
-<h2 id="mmio的硬件实现"><a href="#mmio的硬件实现" class="headerlink" title="mmio的硬件实现"></a>mmio的硬件实现</h2><h3 id="1、AXI-LITE总线读写"><a href="#1、AXI-LITE总线读写" class="headerlink" title="1、AXI-LITE总线读写"></a>1、AXI-LITE总线读写</h3><p>mmio读写寄存器的实质是ZYNQ通过AXI-LITE总线读写IP核，总线具体不详细讲，需要在被控制的IP核上加AXI-LITE的Slaver口，可以用vivado添加会自动生成参考代码，生成4个供读写的寄存器（数量可以自己设置），分别是slv_reg0、slv_reg1、slv_reg2、slv_reg3寄存器，然后这里slv_reg0定义为IP核的基地址，就是根据IP核的基地址创建mmio，<code>mmio.read(0x00)</code>就是读slv_reg0寄存器了，如果读下一个只需要偏置加4，<code>mmio.read(0x00 + 4)</code>。</p>
-<h3 id="2、控制多个IP核"><a href="#2、控制多个IP核" class="headerlink" title="2、控制多个IP核"></a>2、控制多个IP核</h3><p>控制多个IP核其实就是一个Master控制多个Slaver，需要用到AXI-Interconnect，这是一个多功能AXI连接IP核，内部包含很多小的基础核，只要在上面添加一个Master口，再接另外的IP核就可以了，这里关键是配置地址，不同的IP核分配给他的基地址是不一样的，比如我添加了两个DMA，他们的基地址不同，所以mmio.read(0x04)其实是读各自的状态寄存器了（mmio根据基地址建立对象，参数是偏置）</p>
-
-          
+          <h2 id="overlay流程"><a href="#overlay流程" class="headerlink" title="overlay流程"></a>overlay流程</h2><p>通过比赛中dma的例子来分析<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">dma = overlay.axi_dma_0</span><br><span class="line"></span><br><span class="line">xlnk = Xlnk()</span><br><span class="line">in_buffer = xlnk.cma_array(shape=(<span class="number">4</span>,), dtype=np.uint32)</span><br><span class="line">out_buffer = xlnk.cma_array(shape=(<span class="number">4</span>,), dtype=np.uint32)</span><br><span class="line"></span><br><span class="line">dma.sendchannel.transfer(in_buffer)</span><br><span class="line">dma.recvchannel.transfer(out_buffer) </span><br><span class="line">dma.sendchannel.wait()</span><br><span class="line">dma.recvchannel.wait()</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/25/PYNQ之软硬控制小结/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -826,22 +771,14 @@
 
       
         
-          
-            <h2 id="自定义驱动-Driver"><a href="#自定义驱动-Driver" class="headerlink" title="自定义驱动 Driver"></a>自定义驱动 Driver</h2><h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>当我们自定义了一个新的IP核，在软件中调用时，是用默认的驱动DefaultIP去实例化的，默认驱动只有简单的创建mmio和读写，对于我们需要的功能可能就不友好了。因此我们可以为自定义IP核自定义一个driver。<br>接着之前自定义IP核往下做，之前的IP核什么功能都没有，只有四个寄存器供读写，现在我写一个驱动实现读取（reg0、reg1）两个寄存器里的值，相加并返回（虽然没有一点用而且本末倒置了），来实现添加驱动的实验。</p>
-<h3 id="设计要求"><a href="#设计要求" class="headerlink" title="设计要求"></a>设计要求</h3><ol>
-<li>自定义驱动要继承自<code>DefaultIP</code></li>
-<li>类的构造函数只能有一个参数<code>description</code>，且通过super来传递</li>
-<li><p>要用<strong>bindto</strong>绑定到IP的类型<br> 类型的查找方法，在ip_dict中，每个IP核有个type，其对应的值就是要绑定的类型，比如下面的dma中</p>
- <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'axi_dma_0'</span>: &#123;<span class="string">'phys_addr'</span>: <span class="number">1077936128</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:ip:axi_dma:7.1'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'axi_dma_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">lib</span>.<span class="title">dma</span>.<span class="title">DMA</span>'&gt;&#125;</span></span><br></pre></td></tr></table></figure>
-<p> 可以发现tyep的值为<code>xilinx.com:ip:axi_dma:7.1</code>，所以要在DMA类中添加<br> <code>bindto = [&#39;xilinx.com:ip:axi_dma:7.1&#39;]</code><br> 就可以成功绑定，之后发现这种类型的IP核（比如这里的axi_dma_0），就会自动调用DMA来驱动，而不是DefaultIP了</p>
-</li>
-</ol>
-<h3 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h3><h4 id="驱动定义"><a href="#驱动定义" class="headerlink" title="驱动定义"></a>驱动定义</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pynq <span class="keyword">import</span> DefaultIP</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDriver</span><span class="params">(DefaultIP)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, description)</span>:</span></span><br><span class="line">        super().__init__(description=description)</span><br><span class="line"></span><br><span class="line">    bindto = [<span class="string">'xilinx.com:user:tao_axi_lite_ctrl:1.0'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(self)</span>:</span></span><br><span class="line">        a = self.read(<span class="number">0x00</span>)</span><br><span class="line">        b = self.read(<span class="number">0x00</span> + <span class="number">4</span>)</span><br><span class="line">        <span class="keyword">return</span> a + b</span><br></pre></td></tr></table></figure>
-<p>定义了一个函数，读取两个寄存器的值，相加返回</p>
-<h4 id="验证结果"><a href="#验证结果" class="headerlink" title="验证结果"></a>验证结果</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">print(overlay.ip_dict)</span><br><span class="line">print(overlay.ip_dict.keys())</span><br><span class="line"><span class="comment">#help(overlay)</span></span><br><span class="line">my_ip = overlay.tao_axi_lite_ctrl_0</span><br><span class="line"><span class="comment">#help(my_ip)</span></span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span>, <span class="number">1</span>)       <span class="comment">#写入1到reg0</span></span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span> + <span class="number">4</span>, <span class="number">2</span>)   <span class="comment">#写入2到reg1</span></span><br><span class="line">print(my_ip.read(<span class="number">0x00</span>))         <span class="comment">#读取reg0得1</span></span><br><span class="line">print(my_ip.read(<span class="number">0x00</span> + <span class="number">4</span>))     <span class="comment">#读取reg1得2</span></span><br><span class="line"></span><br><span class="line">my_ip.add() <span class="comment">#调用驱动定义的函数，读取reg0,reg1并相加</span></span><br></pre></td></tr></table></figure>
-<p>分别写入1和2到reg0和reg1，调用<code>my_ip.add</code>函数，得到结果3。同时可以从ip_dict中发现，自定义IP核的驱动描述driver变成了<code>__main__.MyDriver</code>，因为我这个自定义驱动写在了main下。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'tao_axi_lite_ctrl_0'</span>: &#123;<span class="string">'phys_addr'</span>: <span class="number">1136656384</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:user:tao_axi_lite_ctrl:1.0'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'tao_axi_lite_ctrl_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">__main__</span>.<span class="title">MyDriver</span>'&gt;&#125;</span></span><br></pre></td></tr></table></figure></p>
-
-          
+          <h2 id="自定义驱动-Driver"><a href="#自定义驱动-Driver" class="headerlink" title="自定义驱动 Driver"></a>自定义驱动 Driver</h2><h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>当我们自定义了一个新的IP核，在软件中调用时，是用默认的驱动DefaultIP去实例化的，默认驱动只有简单的创建mmio和读写，对于我们需要的功能可能就不友好了。因此我们可以为自定义IP核自定义一个driver。<br>接着之前自定义IP核往下做，之前的IP核什么功能都没有，只有四个寄存器供读写，现在我写一个驱动实现读取（reg0、reg1）两个寄存器里的值，相加并返回（虽然没有一点用而且本末倒置了），来实现添加驱动的实验。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/24/PYNQ之自定义驱动/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -958,23 +895,14 @@
 
       
         
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这是一个小实验，主要实现自定义一个S_AXI_LITE接口的IP核，然后用PS写入数据该IP核的寄存器，再从该寄存器读取。<br>主要通过mmio来实现读写，关键程序如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mmio.write(offset, value)</span><br><span class="line">mmio.read(offset)</span><br></pre></td></tr></table></figure></p>
-<h2 id="详解"><a href="#详解" class="headerlink" title="详解"></a>详解</h2><h3 id="自定义IP核"><a href="#自定义IP核" class="headerlink" title="自定义IP核"></a>自定义IP核</h3><p>就是用vivado生成的带一个S_AXI_LITE的IP核。内部含有四个寄存器供写入和读取，分别是slv_reg0、slv_reg1、slv_reg2、slv_reg3。</p>
-<h3 id="接线"><a href="#接线" class="headerlink" title="接线"></a>接线</h3><p>只要在ZYNQ的M_AXI_GP0连接的AXI Interconnect添加一个Master口，再接在自定义IP核的S_AXI口就行了，用的是AXI_LITE协议。</p>
-<h3 id="程序设计"><a href="#程序设计" class="headerlink" title="程序设计"></a>程序设计</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">print(overlay.ip_dict)</span><br><span class="line">print(overlay.ip_dict.keys())</span><br><span class="line"></span><br><span class="line">my_ip = overlay.tao_axi_lite_ctrl_0</span><br><span class="line"></span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span>, <span class="number">1</span>)</span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span> + <span class="number">4</span>, <span class="number">2</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span> + <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
-<ol>
-<li>先是加载overlay<br><code>overlay = Overlay(&#39;/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit&#39;)</code></li>
-<li>输出overlayd的ip_dict看看，有没自定义的IP核<br><code>print(overlay.ip_dict)</code><br><code>print(overlay.ip_dict.keys())</code></li>
-<li>创建自定义IP核的对象<br><code>my_ip = overlay.tao_axi_lite_ctrl_0</code><br>这里有很多要解释，之前已经说过了，会根据_IPMap类把ip_dict等字典封装好，输入<code>overlay.tao_axi_lite_ctrl_0</code>，会根据这个key，找出其对应的驱动driver，这里的driver’: <class 'pynq.lib.defaultip'="">，因为我没有为这个IP核自定义驱动，所以会调用默认的DefaultIP来初始化，之前一直没理解驱动类别是怎么判定的，现在发现是在_TCL解析种识别并加入到对应的ip_dict中的，如果要自定义驱动的话，要在自定义驱动中加上<code>bindto = [&#39;xilinx.com:ip:axi_dma:7.1&#39;]</code>，才能识别自定义IP核并绑定到自定义的驱动，具体的信息是在TCL中，这个以后去实验，再介绍。</class></li>
-<li>这样就可以知道是根据默认驱动DefaultIP来初始化的了，DefaultIP很简单，就是定义了一个mmio对象和读写mmio的函数。所以返回的my_ip其实是一个DefaultIP类的对象，我可以直接用类内定义的读函数，也可以通过类的属性my_ip.mmio（类内根据ip_dict定义的一个MMIO类对象），直接用mmio的读和写。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my_ip.mmio.write(<span class="number">0x00</span>, <span class="number">1</span>)</span><br><span class="line">my_ip.mmio.write(<span class="number">0x00</span> + <span class="number">4</span>, <span class="number">2</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span>)</span><br><span class="line">my_ip.read(<span class="number">0x00</span> + <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>两个参数分别是偏置和值。注意传入的基地址表示的是IP核的slv_reg0寄存器，基地址+4表示slv_reg1寄存器，所以我这里是分别给两个寄存器写入值，再读出来。</p>
-<h4 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'axi_dma_0'</span>: &#123;<span class="string">'phys_addr'</span>: <span class="number">1077936128</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:ip:axi_dma:7.1'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'axi_dma_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">lib</span>.<span class="title">dma</span>.<span class="title">DMA</span>'&gt;&#125;</span></span><br><span class="line"><span class="class">'<span class="title">tao_axi_lite_ctrl_0</span>':</span> &#123;<span class="string">'phys_addr'</span>: <span class="number">1136656384</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:user:tao_axi_lite_ctrl:1.0'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'tao_axi_lite_ctrl_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">overlay</span>.<span class="title">DefaultIP</span>'&gt;&#125;&#125;</span></span><br></pre></td></tr></table></figure>
-<p>正确识别出两个IP核信息，并且能正确输入和读取。</p>
-
-          
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这是一个小实验，主要实现自定义一个S_AXI_LITE接口的IP核，然后用PS写入数据该IP核的寄存器，再从该寄存器读取。<br>主要通过mmio来实现读写，关键程序如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mmio.write(offset, value)</span><br><span class="line">mmio.read(offset)</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/24/AXI-LITE实现控制自定义IP核/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1091,132 +1019,20 @@
 
       
         
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>AXI（Advanced eXtensible Interface）本是由ARM公司提出的一种总线协议，Xilinx从6系列的FPGA开始对AXI总线提供支持，此时AXI已经发展到了AXI4这个版本，所以当你用到Xilinx的软件的时候看到的都是“AIX4”的IP，如Vivado打包一个AXI IP的时候，看到的都是Create a new AXI4 peripheral。<br>AXI总线有三种类型：</p>
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>AXI（Advanced eXtensible Interface）本是由ARM公司提出的一种总线协议，Xilinx从6系列的FPGA开始对AXI总线提供支持，此时AXI已经发展到了AXI4这个版本，所以当你用到Xilinx的软件的时候看到的都是“AIX4”的IP，如Vivado打包一个AXI IP的时候，看到的都是Create a new AXI4 peripheral。<br>AXI总线有三种类型：</p>
 <ul>
 <li><p><strong>AXI4</strong>：主要面向高性能地址映射通信的需求，是面向地址映射的接口，允许最大256轮的数据突发传输；</p>
 </li>
 <li><p><strong>AXI4-Stream</strong>：面向高速流数据传输；去掉了地址项，允许无限制的数据突发传输规模，之前DMA到FIFO间数据传输就是用的AXI-Stream。</p>
 </li>
-<li><p><strong>AXI4-Lite</strong>：是一个轻量级的地址映射单次传输接口，占用很少的逻辑单元。主要用于命令的控制。今天主要分析这个。</p>
-</li>
-</ul>
-<h2 id="详解"><a href="#详解" class="headerlink" title="详解"></a>详解</h2><h3 id="信号组成"><a href="#信号组成" class="headerlink" title="信号组成"></a>信号组成</h3><ol>
-<li>读地址通道：ARVALID, ARADDR, ARREADY信号；</li>
-<li>读数据通道：RVALID, RDATA, RREADY, RRESP信号；</li>
-<li>写地址通道：AWVALID，AWADDR, AWREADY信号；</li>
-<li>写数据通道：WVALID, WDATA，WSTRB, WREADY信号；</li>
-<li>写应答通道：BVALID, BRESP, BREADY信号；</li>
-<li>系统通道：ACLK，ARESETN信号。</li>
-</ol>
-<blockquote>
-<p>读地址信号都是以AR开头（A：address；R：read）<br>写地址信号都是以AW开头（A：address；W：write）<br>读数据信号都是以R开头（R：read）<br>写数据信号都是以W开头（W：write）<br>应答型号都是以B开头（B：back）<br>AXI4-Stream总线的信号都是以 T 开头的</p>
-</blockquote>
-<h3 id="AXI-接口"><a href="#AXI-接口" class="headerlink" title="AXI 接口"></a>AXI 接口</h3><ul>
-<li><strong>AXI-GP</strong>接口：是通用的AXI接口，包括两个32位主设备接口和两个32位从设备接口，用过改接口可以访问PS中的片内外设。</li>
-<li><strong>AXI-HP</strong>接口：是高性能/带宽的标准的接口，PL模块作为主设备连接（从下图中箭头可以看出）。主要用于PL访问PS上的存储器（DDR和On-Chip RAM）</li>
-<li><strong>AXI-ACP</strong>接口：是ARM多核架构下定义的一种接口，中文翻译为加速器一致性端口，用来管理DMA之类的不带缓存的AXI外设，PS端是Slave接口。</li>
-</ul>
-<h3 id="AXI-握手过程"><a href="#AXI-握手过程" class="headerlink" title="AXI 握手过程"></a>AXI 握手过程</h3><p>采用的是READY，VALID握手通信机制。Slave产生READY信号来指明已经准备好接受数据或控制信息。Master产生VALID信号表示发送数据有效。这样就会有下面三种情况：（都是在后一信号为高后的下一个上升沿开始传输）</p>
-<ol>
-<li>VALID先变高READY后变高</li>
-<li>READY先变高VALID后变高</li>
-<li>VALID和READY信号同时变高</li>
-</ol>
-<blockquote>
-<p>AXI的五个通道，每个通道都有握手机制</p>
-</blockquote>
-<h3 id="读写时序图"><a href="#读写时序图" class="headerlink" title="读写时序图"></a>读写时序图</h3><p><img src="/2018/01/23/AXI-LITE总线协议/AXI_read.png" alt="image"><br><img src="/2018/01/23/AXI-LITE总线协议/AXI_write.png" alt="image"></p>
-<h3 id="AXI-代码"><a href="#AXI-代码" class="headerlink" title="AXI 代码"></a>AXI 代码</h3><p>这里是通过VIVADO生成AXI_LITE的IP产生的参考代码来分析的，这里只创建了一个S_AXI_LITE接口，为以后写自己控制的模块做准备。先看顶层模块的接口定义。</p>
-<h4 id="接口信号"><a href="#接口信号" class="headerlink" title="接口信号"></a>接口信号</h4><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_aclk,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_aresetn,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [C_S_AXI_ADDR_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_awaddr,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [<span class="number">2</span> : <span class="number">0</span>] s_axi_awprot,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_awvalid,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_awready,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [C_S_AXI_DATA_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_wdata,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [(C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span> : <span class="number">0</span>] s_axi_wstrb,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_wvalid,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_wready,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span> [<span class="number">1</span> : <span class="number">0</span>] s_axi_bresp,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_bvalid,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_bready,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [C_S_AXI_ADDR_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_araddr,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span> [<span class="number">2</span> : <span class="number">0</span>] s_axi_arprot,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_arvalid,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_arready,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span> [C_S_AXI_DATA_WIDTH-<span class="number">1</span> : <span class="number">0</span>] s_axi_rdata,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span> [<span class="number">1</span> : <span class="number">0</span>] s_axi_rresp,</span><br><span class="line"><span class="keyword">output</span> <span class="keyword">wire</span>  s_axi_rvalid,</span><br><span class="line"><span class="keyword">input</span> <span class="keyword">wire</span>  s_axi_rready</span><br></pre></td></tr></table></figure>
-<p>下面详细介绍每个信号</p>
-<ol>
-<li><strong>读通道</strong></li>
-</ol>
-<ul>
-<li>ARVALID<br>  读地址有效。此信号表明Master的地址和控制信息有效</li>
-<li>RVALID<br>  读数据有效。此信号表明Master的数据有效</li>
-<li>ARADDR<br>  读地址</li>
-<li>RDATA<br>  读数据</li>
-<li>ARREADY<br>  读地址准备好了。该信号指示Slave准备好接受一个地址和相关联的控制信号</li>
-<li>RREADY<br>  读数据准备好了。该信号指示Slave准备好接收数据</li>
-<li>ARPROT<br>  保护类型。这个信号表示该事务的特权和安全级别，并确定是否该事务是一个数据存取或指令的访问</li>
-<li>RRESP<br>  读取响应。这个信号表明读事务处理的状态。</li>
-</ul>
-<ol>
-<li><strong>写通道</strong></li>
-</ol>
-<ul>
-<li>AWVALID<br>  写地址有效。这个信号表示Master的写地址和控制信息有效。</li>
-<li>WVALID<br>  写有效。这个信号表示Master的写数据和选通信号有效。</li>
-<li>AWADDR<br>  写地址</li>
-<li>WDATA<br>  写数据</li>
-<li>AWREADY<br>  写地址准备好了。该信号指示Slave准备好接受一个地址和相关联的控制信号</li>
-<li>WREADY<br>  写准备好了。该信号指示Slave可以接受写数据。</li>
-<li>WSTRB<br>  写选通。这个信号表明该字节通道持有效数据。每一bit对应WDATA一个字节</li>
-<li>AWPROT<br>  写通道保护类型。这个信号表示该事务的特权和安全级别，并确定是否该事务是一个数据存取或指令的访问</li>
-</ul>
-<ol>
-<li><strong>应答通道</strong></li>
-</ol>
-<ul>
-<li>BVALID<br>  写响应有效。此信号表明写命令的有效写入响应。</li>
-<li>BREADY<br>  响应准备。该信号指示Master可以接受一个响应信号</li>
-<li>BRESP<br>  写响应。这个信号表示写事务处理的状态。</li>
-</ul>
-<h4 id="axi-awready"><a href="#axi-awready" class="headerlink" title="axi_awready"></a>axi_awready</h4><p><code>assign S_AXI_AWREADY    = axi_awready;</code>  直接输出的地址写就绪<br>需要S_AXI_AWVALID和S_AXI_WVALID都为高，既写地址有效，写数据有效时，拉高写地址就绪。aw_en表示写地址使能，表示地址已经好了，是后面的条件。<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          axi_awready &lt;= <span class="number">1'b0</span>;</span><br><span class="line">          aw_en &lt;= <span class="number">1'b1</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span>    </span><br><span class="line">          <span class="keyword">if</span> (~axi_awready &amp;&amp; S_AXI_AWVALID &amp;&amp; S_AXI_WVALID &amp;&amp; aw_en)</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              <span class="comment">// slave is ready to accept write address when </span></span><br><span class="line">              <span class="comment">// there is a valid write address and write data</span></span><br><span class="line">              <span class="comment">// on the write address and data bus. This design </span></span><br><span class="line">              <span class="comment">// expects no outstanding transactions. </span></span><br><span class="line">              axi_awready &lt;= <span class="number">1'b1</span>;</span><br><span class="line">              aw_en &lt;= <span class="number">1'b0</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (S_AXI_BREADY &amp;&amp; axi_bvalid)</span><br><span class="line">                <span class="keyword">begin</span></span><br><span class="line">                  aw_en &lt;= <span class="number">1'b1</span>;</span><br><span class="line">                  axi_awready &lt;= <span class="number">1'b0</span>;</span><br><span class="line">                <span class="keyword">end</span></span><br><span class="line">          <span class="keyword">else</span>           </span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              axi_awready &lt;= <span class="number">1'b0</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="axi-awaddr"><a href="#axi-awaddr" class="headerlink" title="axi_awaddr"></a>axi_awaddr</h4><p>用来锁存住地址，需要：S_AXI_AWVALID、S_AXI_WVALID、aw_en都为高。<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          axi_awaddr &lt;= <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span>    </span><br><span class="line">          <span class="keyword">if</span> (~axi_awready &amp;&amp; S_AXI_AWVALID &amp;&amp; S_AXI_WVALID &amp;&amp; aw_en)</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              <span class="comment">// Write Address latching </span></span><br><span class="line">              axi_awaddr &lt;= S_AXI_AWADDR;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="axi-wready"><a href="#axi-wready" class="headerlink" title="axi_wready"></a>axi_wready</h4><p><code>assign S_AXI_WREADY    = axi_wready;</code>输出的写数据准备接收就绪<br>需要：S_AXI_AWVALID、S_AXI_WVALID、aw_en都为高<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          axi_wready &lt;= <span class="number">1'b0</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span>    </span><br><span class="line">          <span class="keyword">if</span> (~axi_wready &amp;&amp; S_AXI_WVALID &amp;&amp; S_AXI_AWVALID &amp;&amp; aw_en )</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              <span class="comment">// slave is ready to accept write data when </span></span><br><span class="line">              <span class="comment">// there is a valid write address and write data</span></span><br><span class="line">              <span class="comment">// on the write address and data bus. This design </span></span><br><span class="line">              <span class="comment">// expects no outstanding transactions. </span></span><br><span class="line">              axi_wready &lt;= <span class="number">1'b1</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">          <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              axi_wready &lt;= <span class="number">1'b0</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="PS写入到PL寄存器"><a href="#PS写入到PL寄存器" class="headerlink" title="PS写入到PL寄存器"></a>PS写入到PL寄存器</h4><p>这部分实现内存映射寄存器的选择和写逻辑的生成。<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assign</span> slv_reg_wren = axi_wready &amp;&amp; S_AXI_WVALID &amp;&amp; axi_awready &amp;&amp; S_AXI_AWVALID;</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          slv_reg0 &lt;= <span class="number">0</span>;</span><br><span class="line">          slv_reg1 &lt;= <span class="number">0</span>;</span><br><span class="line">          slv_reg2 &lt;= <span class="number">0</span>;</span><br><span class="line">          slv_reg3 &lt;= <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">        <span class="keyword">if</span> (slv_reg_wren)</span><br><span class="line">          <span class="keyword">begin</span></span><br><span class="line">            <span class="keyword">case</span> ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )</span><br><span class="line">              <span class="number">2'h0</span>:</span><br><span class="line">                <span class="keyword">for</span> ( byte_index = <span class="number">0</span>; byte_index &lt;= (C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span>; byte_index = byte_index+<span class="number">1</span> )</span><br><span class="line">                  <span class="keyword">if</span> ( S_AXI_WSTRB[byte_index] == <span class="number">1</span> ) <span class="keyword">begin</span></span><br><span class="line">                    <span class="comment">// Respective byte enables are asserted as per write strobes </span></span><br><span class="line">                    <span class="comment">// Slave register 0</span></span><br><span class="line">                    slv_reg0[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>] &lt;= S_AXI_WDATA[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>];</span><br><span class="line">                  <span class="keyword">end</span>  </span><br><span class="line">              <span class="number">2'h1</span>:</span><br><span class="line">                <span class="keyword">for</span> ( byte_index = <span class="number">0</span>; byte_index &lt;= (C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span>; byte_index = byte_index+<span class="number">1</span> )</span><br><span class="line">                  <span class="keyword">if</span> ( S_AXI_WSTRB[byte_index] == <span class="number">1</span> ) <span class="keyword">begin</span></span><br><span class="line">                    <span class="comment">// Respective byte enables are asserted as per write strobes </span></span><br><span class="line">                    <span class="comment">// Slave register 1</span></span><br><span class="line">                    slv_reg1[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>] &lt;= S_AXI_WDATA[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>];</span><br><span class="line">                  <span class="keyword">end</span>  </span><br><span class="line">              <span class="number">2'h2</span>:</span><br><span class="line">                <span class="keyword">for</span> ( byte_index = <span class="number">0</span>; byte_index &lt;= (C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span>; byte_index = byte_index+<span class="number">1</span> )</span><br><span class="line">                  <span class="keyword">if</span> ( S_AXI_WSTRB[byte_index] == <span class="number">1</span> ) <span class="keyword">begin</span></span><br><span class="line">                    <span class="comment">// Respective byte enables are asserted as per write strobes </span></span><br><span class="line">                    <span class="comment">// Slave register 2</span></span><br><span class="line">                    slv_reg2[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>] &lt;= S_AXI_WDATA[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>];</span><br><span class="line">                  <span class="keyword">end</span>  </span><br><span class="line">              <span class="number">2'h3</span>:</span><br><span class="line">                <span class="keyword">for</span> ( byte_index = <span class="number">0</span>; byte_index &lt;= (C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span>; byte_index = byte_index+<span class="number">1</span> )</span><br><span class="line">                  <span class="keyword">if</span> ( S_AXI_WSTRB[byte_index] == <span class="number">1</span> ) <span class="keyword">begin</span></span><br><span class="line">                    <span class="comment">// Respective byte enables are asserted as per write strobes </span></span><br><span class="line">                    <span class="comment">// Slave register 3</span></span><br><span class="line">                    slv_reg3[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>] &lt;= S_AXI_WDATA[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>];</span><br><span class="line">                  <span class="keyword">end</span>  </span><br><span class="line">              <span class="keyword">default</span> : <span class="keyword">begin</span></span><br><span class="line">                          slv_reg0 &lt;= slv_reg0;</span><br><span class="line">                          slv_reg1 &lt;= slv_reg1;</span><br><span class="line">                          slv_reg2 &lt;= slv_reg2;</span><br><span class="line">                          slv_reg3 &lt;= slv_reg3;</span><br><span class="line">                        <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">endcase</span></span><br><span class="line">          <span class="keyword">end</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<p>这段程序的作用是，当PS那边向AXI4-Lite总线写数据时，PL这边负责将数据接收到寄存器slv_reg。而slv_reg寄存器有0~3共4个。至于赋值给哪一个由axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB]决定，根据宏定义其实就是由axi_awaddr[3:2]（写地址中不仅包含地址，而且包含了控制位，这里的[3:2]就是控制位）决定赋值给哪个slv_reg。</p>
-<p>PS调用写函数时，如果不做地址偏移的话，axi_awaddr[3:2]的值默认是为0的，举个例子，如果我们自定义的IP的地址被映射为0x43C00000，那么我们mmio(0x43C00000,Value)写的就是slv_reg0的值。如果地址偏移4位，如<br>mmio(0x43C00000 + 4,Value) 写的就是slv_reg1的值，依次类推。</p>
-<p>下面只提取slv_reg0来说明，其他是类似的：<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ( byte_index = <span class="number">0</span>; byte_index &lt;= (C_S_AXI_DATA_WIDTH/<span class="number">8</span>)-<span class="number">1</span>; byte_index = byte_index+<span class="number">1</span> )</span><br><span class="line">    <span class="keyword">if</span> ( S_AXI_WSTRB[byte_index] == <span class="number">1</span> ) </span><br><span class="line">      <span class="keyword">begin</span></span><br><span class="line">        slv_reg0[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>] &lt;= S_AXI_WDATA[(byte_index*<span class="number">8</span>) +: <span class="number">8</span>];</span><br><span class="line">      <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>其中，C_S_AXI_DATA_WIDTH的宏定义的值为32，也就是数据位宽，S_AXI_WSTRB就是写选通信号，S_AXI_WDATA就是写数据信号。<br>当byte_index = 0的时候，就读取低8位，<code>slv_reg0[7:0] &lt;= S_AXI_WDATA[7:0];</code>，所以WSTRB控制着WDATA中哪些字节能够被写入寄存器。<br>这样，我们只需要读取slv_reg0的值，就可以得到PS段写入的数据了。</p>
-<h4 id="axi-bvalid-、-axi-bresp"><a href="#axi-bvalid-、-axi-bresp" class="headerlink" title="axi_bvalid 、 axi_bresp"></a>axi_bvalid 、 axi_bresp</h4><p>写应答逻辑生成，直接输出到总线<br><code>assign S_AXI_BRESP    = axi_bresp;</code><br><code>assign S_AXI_BVALID    = axi_bvalid;</code><br>axi_bvalid表示已将数据写入，axi_bresp回应的内容有4种见下表。</p>
-<table>
-<thead>
-<tr>
-<th>BRESP[1:0]</th>
-<th>Response</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>b00</td>
-<td>OKAY</td>
-<td>正常通道传输成功</td>
-</tr>
-<tr>
-<td>b01</td>
-<td>EXOKAY</td>
-<td>独特通道传输成功</td>
-</tr>
-<tr>
-<td>b10</td>
-<td>SLVERR</td>
-<td>从机错误</td>
-</tr>
-<tr>
-<td>b11</td>
-<td>DECERR</td>
-<td>解码错误</td>
-</tr>
-</tbody>
-</table>
-<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          axi_bvalid  &lt;= <span class="number">0</span>;</span><br><span class="line">          axi_bresp   &lt;= <span class="number">2'b0</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span>    </span><br><span class="line">          <span class="keyword">if</span> (axi_awready &amp;&amp; S_AXI_AWVALID &amp;&amp; ~axi_bvalid &amp;&amp; axi_wready &amp;&amp; S_AXI_WVALID)</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              <span class="comment">// indicates a valid write response is available</span></span><br><span class="line">              axi_bvalid &lt;= <span class="number">1'b1</span>;</span><br><span class="line">              axi_bresp  &lt;= <span class="number">2'b0</span>; <span class="comment">// 'OKAY' response </span></span><br><span class="line">            <span class="keyword">end</span>                   <span class="comment">// work error responses in future</span></span><br><span class="line">          <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              <span class="keyword">if</span> (S_AXI_BREADY &amp;&amp; axi_bvalid) </span><br><span class="line">                <span class="comment">//check if bready is asserted while bvalid is high) </span></span><br><span class="line">                <span class="comment">//(there is a possibility that bready is always asserted high)   </span></span><br><span class="line">                <span class="keyword">begin</span></span><br><span class="line">                  axi_bvalid &lt;= <span class="number">1'b0</span>; </span><br><span class="line">                <span class="keyword">end</span>  </span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<h4 id="axi-arready-、-axi-arvalid"><a href="#axi-arready-、-axi-arvalid" class="headerlink" title="axi_arready 、 axi_arvalid"></a>axi_arready 、 axi_arvalid</h4><p><code>assign S_AXI_ARREADY    = axi_arready;</code>地址读就绪<br><code>assign S_AXI_RVALID    = axi_rvalid;</code>地址读有效，这些都类似，容易理解，不详细分析了。</p>
-<h4 id="PS读取PL寄存器"><a href="#PS读取PL寄存器" class="headerlink" title="PS读取PL寄存器"></a>PS读取PL寄存器</h4><p>先根据控制位选择读取哪个寄存器。根据axi_araddr[3:2]选择把哪个寄存器slv_reg赋值给输出寄存器reg_data_out。<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assign</span> slv_reg_rden = axi_arready &amp; S_AXI_ARVALID &amp; ~axi_rvalid;</span><br><span class="line"><span class="keyword">always</span> @(*)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="comment">// Address decoding for reading registers</span></span><br><span class="line">    <span class="keyword">case</span> ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )</span><br><span class="line">        <span class="number">2'h0</span>   : reg_data_out &lt;= slv_reg0;</span><br><span class="line">        <span class="number">2'h1</span>   : reg_data_out &lt;= slv_reg1;</span><br><span class="line">        <span class="number">2'h2</span>   : reg_data_out &lt;= slv_reg2;</span><br><span class="line">        <span class="number">2'h3</span>   : reg_data_out &lt;= slv_reg3;</span><br><span class="line">        <span class="keyword">default</span> : reg_data_out &lt;= <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">endcase</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>然后把数据输出到总线<br><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @( <span class="keyword">posedge</span> S_AXI_ACLK )</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">      <span class="keyword">if</span> ( S_AXI_ARESETN == <span class="number">1'b0</span> )</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">          axi_rdata  &lt;= <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">end</span> </span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span>    </span><br><span class="line">          <span class="comment">// When there is a valid read address (S_AXI_ARVALID) with </span></span><br><span class="line">          <span class="comment">// acceptance of read address by the slave (axi_arready), </span></span><br><span class="line">          <span class="comment">// output the read dada </span></span><br><span class="line">          <span class="keyword">if</span> (slv_reg_rden)</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">              axi_rdata &lt;= reg_data_out;     <span class="comment">// register read data</span></span><br><span class="line">            <span class="keyword">end</span>   </span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>同样当PS调用读取函数时，这里axi_awaddr[3:2]默认是0，所以我们只需要把slv_reg0替换成我们自己数据，就可以让PS通过总线读到我们提供的数据。或者通过<strong>基地址+4</strong>来选择下一个寄存器。</p>
-<blockquote>
-<p>目前这里只有4个寄存器，那是因为之前选择的是4个，其实我们可以定义的更多，在生成IP核的Number of Registers里选择。</p>
-</blockquote>
-<h3 id="重要的事情再说一遍"><a href="#重要的事情再说一遍" class="headerlink" title="重要的事情再说一遍"></a>重要的事情再说一遍</h3><p>如果我们自定义的IP的地址被映射为0x43C00000，那么用mmio(0x43C00000,Value)写的就是slv_reg0的值。如果地址偏移4位，如mmio(0x43C00000 + 4,Value) 写的就是slv_reg1的值。</p>
-<h3 id="补充一个对地址的理解"><a href="#补充一个对地址的理解" class="headerlink" title="补充一个对地址的理解"></a>补充一个对地址的理解</h3><p>地址编辑器种的offset Address应该是指基地址BASEADDR，high Address指的是最高地址。要求i是基地址加偏置不能超过最高地址。</p>
-
-          
+<li><p><strong>AXI4-Lite</strong>：是一个轻量级的地址映射单次传输接口，占用很少的逻辑单元。主要用于命令的控制。今天主要分析这个。</p></li></ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/23/AXI-LITE总线协议/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1333,33 +1149,19 @@
 
       
         
-          
-            <h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>尝试用ZYNQ控制多个IP核，之前已经了解了AXI-interconnect的作用，可以通过它连接多个Master和Slaver，之前是通过ZYNQ两端接axi-interconnect连DMA的，现在尝试把两个axi-interconnect都增加Master和Slaver，再增加一个DMA串FIFO。接好时钟和复位。自动设置，配置好两个DMA的地址。开始测试。<br>help(overlay)可以看到识别出了两个IP核都是DMA类型  </p>
+          <h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>尝试用ZYNQ控制多个IP核，之前已经了解了AXI-interconnect的作用，可以通过它连接多个Master和Slaver，之前是通过ZYNQ两端接axi-interconnect连DMA的，现在尝试把两个axi-interconnect都增加Master和Slaver，再增加一个DMA串FIFO。接好时钟和复位。自动设置，配置好两个DMA的地址。开始测试。<br>help(overlay)可以看到识别出了两个IP核都是DMA类型  </p>
 <ul>
 <li>axi_dma_0 : pynq.lib.dma.DMA</li>
 <li>axi_dma_1 : pynq.lib.dma.DMA</li>
 </ul>
 <p>因为axi_dma_0接的是vivado提供的ip核AXI4-Stream DATA FIFO，而axi_dma_1接的是我自己写的FIFO，用如下代码分别创建两个dma对象，可以获得不同的输出，证明是达到控制不同IP核的效果。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dma = overlay.axi_dma_0</span><br><span class="line">dma1 = overlay.axi_dma_1</span><br></pre></td></tr></table></figure></p>
-<h3 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">dma = overlay.axi_dma_0</span><br><span class="line">dma1 = overlay.axi_dma_1</span><br><span class="line"></span><br><span class="line">xlnk = Xlnk()</span><br><span class="line">in_buffer = xlnk.cma_array(shape=(<span class="number">4</span>,), dtype=np.uint32)</span><br><span class="line">out_buffer = xlnk.cma_array(shape=(<span class="number">4</span>,), dtype=np.uint32)</span><br><span class="line"></span><br><span class="line">dma.sendchannel.transfer(in_buffer)</span><br><span class="line">dma.recvchannel.transfer(out_buffer) </span><br><span class="line">dma.sendchannel.wait()</span><br><span class="line">dma.recvchannel.wait()</span><br></pre></td></tr></table></figure>
-<ol>
-<li>根据overlay解析里知道，首先调用Overlay类加载Su.bit，就可以解析对应的Su.tcl，根据_TCL类生成对象tcl。</li>
-<li>保存tcl中的ip_dict、gpio_dict、interrupt_controllers、interrupt_pins、hierarchy_dict、clock_dict为overlay的类属性，因为有两个dma的ip核，所以ip_dict中应该包含以下部分：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;axi_dma_0: &#123;<span class="string">'phys_addr'</span> : 物理地址<span class="number">1</span>, <span class="string">'addr_range'</span> : 地址范围<span class="number">1</span>, <span class="string">'type'</span> : <span class="string">'ip'</span>, <span class="string">'config'</span> : dict, <span class="string">'state'</span> : str, <span class="string">'interrupts'</span> : dict, <span class="string">'gpio'</span> : dict, <span class="string">'fullpath'</span> : str&#125;&#125;</span><br><span class="line">&#123;axi_dma_1: &#123;<span class="string">'phys_addr'</span> : 物理地址<span class="number">2</span>, <span class="string">'addr_range'</span> : 地址范围<span class="number">2</span>, <span class="string">'type'</span> : <span class="string">'ip'</span>, <span class="string">'config'</span> : dict, <span class="string">'state'</span> : str, <span class="string">'interrupts'</span> : dict, <span class="string">'gpio'</span> : dict, <span class="string">'fullpath'</span> : str&#125;&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>这里两个IP核根据地址不同就有区别了。</p>
-<ol>
-<li>然后根据ip_dict 和 hierarchy_dict建立_IPMap类对象，作为overlay._ip_map，会新建两个属性axi_dma_0和axi_dma_0，值为对应的驱动描述。</li>
-<li>执行<code>dma = overlay.axi_dma_0</code>时，根据其pynq.lib.dma.DMA，会构建对应的DMA类对象。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DMA</span><span class="params">(DefaultIP)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, description, *args, **kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> type(description) <span class="keyword">is</span> <span class="keyword">not</span> dict <span class="keyword">or</span> args <span class="keyword">or</span> kwargs:</span><br><span class="line">            <span class="keyword">raise</span> RuntimeError(<span class="string">'You appear to want the old DMA driver which '</span></span><br><span class="line">                               <span class="string">'has been deprecated and moved to '</span></span><br><span class="line">                               <span class="string">'pynq.lib.deprecated'</span>)</span><br><span class="line">        super().__init__(description=description)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">'mm2s_introut'</span> <span class="keyword">in</span> description[<span class="string">'interrupts'</span>]:</span><br><span class="line">            self.sendchannel = _DMAChannel(self.mmio, <span class="number">0x0</span>, self.mm2s_introut)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.sendchannel = _DMAChannel(self.mmio, <span class="number">0x0</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="string">'s2mm_introut'</span> <span class="keyword">in</span> description[<span class="string">'interrupts'</span>]:</span><br><span class="line">            self.recvchannel = _DMAChannel(self.mmio, <span class="number">0x30</span>, self.s2mm_introut)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.recvchannel = _DMAChannel(self.mmio, <span class="number">0x30</span>)</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>这里的<code>super()</code>是调用父类进行初始化，如果自己写的IP核的话一般就用默认的DefaultIP来初始化而不是DMA了，后面控制自己写的IP核可以留意下。下面这段是class DefaultIP被调用的初始化程序。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, description)</span>:</span></span><br><span class="line">    self.mmio = MMIO(description[<span class="string">'phys_addr'</span>], description[<span class="string">'addr_range'</span>])</span><br><span class="line">    <span class="keyword">if</span> <span class="string">'interrupts'</span> <span class="keyword">in</span> description:</span><br><span class="line">        self._interrupts = description[<span class="string">'interrupts'</span>]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        self._interrupts = &#123;&#125;</span><br><span class="line">    <span class="keyword">if</span> <span class="string">'gpio'</span> <span class="keyword">in</span> description:</span><br><span class="line">        self._gpio = description[<span class="string">'gpio'</span>]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        self._gpio = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> interrupt, details <span class="keyword">in</span> self._interrupts.items():</span><br><span class="line">        setattr(self, interrupt, Interrupt(details[<span class="string">'fullpath'</span>]))</span><br><span class="line">    <span class="keyword">for</span> gpio, entry <span class="keyword">in</span> self._gpio.items():</span><br><span class="line">        gpio_number = GPIO.get_gpio_pin(entry[<span class="string">'index'</span>])</span><br><span class="line">        setattr(self, gpio, GPIO(gpio_number, <span class="string">'out'</span>))</span><br></pre></td></tr></table></figure></p>
-<p>可以看到根据<code>phys_addr</code>物理地址和<code>addr_range</code>地址范围构建了MMIO对象，分别作为mmio的基地址和长度了。这里就可以看出两个DMA的基地址已经不同了，因为是根据各自物理地址来确定的。</p>
-<ol>
-<li>这样后面创建通道<code>self.recvchannel = _DMAChannel(self.mmio, 0x30)</code>就是跟据各自的mmio，基地址已经不同了，相同的偏置代表对应了各自同一个寄存器。所以后面的read和write操作中mmio读写的寄存器也是各自的，就达到了控制多个IP核的目的。</li>
-</ol>
-<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>要控制自己的IP核还要想一下AXI-Lite总线体现在哪里，这里的话控制DMA的是S_AXI_LITE接口，猜测是MMIO是根据AXI_LITE总线读写的。</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/22/控制多个IP核/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1476,100 +1278,14 @@
 
       
         
-          
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>PYNQ板子分为PS（Processing System）和PL（Programmable Logic）部分，PS就是CPU，ARM Cortex-A9芯片，跑了Linux系统，可用JUpyter Notebooks打开。PL部分就是FPGA可编程逻辑，是ZYNQ-7020。<br>而overlay可以让PS和PL部分连起来，提供了接口让PS的python可以直接调用PL的Overlay。比如把外围设备封装成python库，就可以直接控制硬件了。</p>
-<h4 id="overlay组成"><a href="#overlay组成" class="headerlink" title="overlay组成"></a>overlay组成</h4><ul>
-<li><strong>.bit</strong><br>  FPGA的比特流文件，就是平常烧录到板子里的</li>
-<li><strong>.tcl</strong><br>  框图的描述文件，根据BD设计图可用Vivado自动生成，在加载bit文件时会自动读取同一目录下的tcl文件，tcl文件必须和bit文件同名。</li>
-<li><strong>.py</strong><br>  这是python提供的接口，加载overlay后，可根据tcl或取各个IP核的物理地址等信息，通过读写寄存器封装成我们需要的功能。</li>
-</ul>
-<h4 id="几个注意点"><a href="#几个注意点" class="headerlink" title="几个注意点"></a>几个注意点</h4><ol>
-<li><strong>Q</strong>：overlay是加载模块还是加载系统，能否有多个?<br> <strong>A</strong>：overlay是动态加载的，也就是在加载每个overlay时下载对应的bit到FPGA并解析tcl文件，所以当前时刻只有一个overlay在用。  </li>
-<li><strong>Q</strong>：overlay中FPGA里设计的引脚是怎么和python调用时的名字对应的？<br> <strong>A</strong>：通过tcl文件中提供的ip_dict、gpio_dict字典。</li>
-</ol>
-<h2 id="Overlay实现"><a href="#Overlay实现" class="headerlink" title="Overlay实现"></a>Overlay实现</h2><p>这个部分主要介绍一下overlay加载的overlay.py是怎么实现的，理解一下如何从tcl了中读取需要的信息，以及如何烧录程序等等，后面也会讲一下.bit和.tcl是怎么生成的。</p>
-<h3 id="overlay-py关键程序"><a href="#overlay-py关键程序" class="headerlink" title="overlay.py关键程序"></a>overlay.py关键程序</h3><h4 id="Overlay类"><a href="#Overlay类" class="headerlink" title="Overlay类"></a>Overlay类</h4><p>这个类跟踪一个比特流的状态和内容。保存比特流的状态并启用运行保护绑定(应该是运行时不能用另外的Overlay)。<br>我们对overlay的定义是比特流可配置设计，因此，该类必须通过内容的发现和运行时的保护来体现可配置性。overlay把IP和hierarchies层次结构体现为属性。如果没有定制IP驱动和层级驱动，就会用’DefaultIP’和’DefaultHierarchy’来构建。<br>这个类储存了四种字典：IP、GPIO、interrupt controller、interrupt pin。</p>
-<h5 id="四个字典"><a href="#四个字典" class="headerlink" title="四个字典"></a>四个字典</h5><ol>
-<li><strong>IP</strong>：<code>&#39;name&#39; -&gt; {phys_addr, addr_range, type, config, state}</code>  <ul>
-<li>name (str)：是字典的key，也可以看作入口，直接用名字即可访问</li>
-<li>phys_addr (int)：是IP核的物理地址</li>
-<li>addr_range (int)：地址的范围</li>
-<li>type (str)：IP核的类型</li>
-<li>config (dict)：配置参数的字典</li>
-<li>state (str)：IP核的状态信息</li>
-</ul>
-</li>
-<li><strong>GPIO</strong>：<code>&#39;name&#39; -&gt; {pin, state}</code>  <ul>
-<li>pin (int)： 用户对GPIO的索引，从0开始</li>
-<li>state (str)： GPIO的状态信息</li>
-</ul>
-</li>
-<li><strong>Interrupt Controller</strong>：<code>&#39;name&#39; -&gt; {parent, index}</code>  <ul>
-<li>parent (str)： 父控制器的名字，如果直接连到PS7就为空’’</li>
-<li>index (int)：中断的索引</li>
-</ul>
-</li>
-<li><strong>Interrupt Pin</strong>：<code>&#39;name&#39; -&gt; {controller, index}</code>  <ul>
-<li>controller (str)：中断控制器的名字</li>
-<li>index (int)：line线的索引</li>
-</ul>
-</li>
-</ol>
-<h5 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h5><ul>
-<li><strong>bitfile_name</strong> : <code>str</code><br>  .bit文件的绝对路径</li>
-<li><strong>bitstream</strong> : <code>Bitstream</code><br>  对应的.bit文件</li>
-<li><strong>ip_dict</strong> : <code>dict</code><br>  PS7所有可寻址的IP核。上面介绍的IP字典<br>  <code>{str: {&#39;phys_addr&#39; : int, &#39;addr_range&#39; : int, &#39;type&#39; : str, &#39;config&#39; : dict, &#39;state&#39; : str}}</code></li>
-<li><strong>gpio_dict</strong> : <code>dict</code><br>  PS7控制的所有GPIO Pin.<br>  <code>{str: {&#39;index&#39; : int, &#39;state&#39; : str}}</code></li>
-<li><strong>interrupt_controllers</strong> : <code>dict</code><br>  连接到PS7中断线的所有AXI中断控制器.<br>  <code>{str: {&#39;parent&#39;: str, &#39;index&#39; : int}}</code><blockquote>
-<p>PS7是层次结构的根目录root，is未命名的。</p>
-</blockquote>
-</li>
-<li><strong>interrupt_pins</strong> : <code>dict</code><br>  连接到中断控制器的所有Pin<br>  <code>{str: {&#39;controller&#39; : str, &#39;index&#39; : int}}</code></li>
-</ul>
-<h5 id="init"><a href="#init" class="headerlink" title="init"></a>init</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, bitfile_name, download=True, ignore_version=False)</span>:</span></span><br><span class="line">    <span class="comment"># We need to be explicit here due to the way dynamic class</span></span><br><span class="line">    <span class="comment"># class construction interacts with super. Subclasses of</span></span><br><span class="line">    <span class="comment"># Overlay work correctly however.</span></span><br><span class="line">    Bitstream.__init__(self, bitfile_name)</span><br><span class="line"></span><br><span class="line">    tcl = _TCL(_get_tcl_name(self.bitfile_name))</span><br><span class="line">    self.ip_dict = tcl.ip_dict</span><br><span class="line">    self.gpio_dict = tcl.gpio_dict</span><br><span class="line">    self.interrupt_controllers = tcl.interrupt_controllers</span><br><span class="line">    self.interrupt_pins = tcl.interrupt_pins</span><br><span class="line">    self.hierarchy_dict = tcl.hierarchy_dict</span><br><span class="line">    self.clock_dict = tcl.clock_dict</span><br><span class="line"></span><br><span class="line">    description = _complete_description(</span><br><span class="line">        self.ip_dict, self.hierarchy_dict, ignore_version)</span><br><span class="line">    self._ip_map = _IPMap(description)</span><br><span class="line">    <span class="keyword">if</span> download: </span><br><span class="line">        self.download()</span><br></pre></td></tr></table></figure>
-<p>返回一个新的Overlay对象，初始化一个.bit文件作为成员。需要vivado生成的同名.tcl文件放在相同目录下。<br><code>_TCL</code>是pl.py里解析.tcl文件的一个类，可以获取tcl的各种信息，比如ip_dict等，保存成overlay自己的信息。把ip_dict和hierarchy_dict封装成描述description，并根据该描述创建一个_IPMap（IP映射）类对象。download表示是否要重网上下载overlay。</p>
-<h5 id="关键的getattr"><a href="#关键的getattr" class="headerlink" title="关键的getattr"></a>关键的getattr</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span><span class="params">(self, key)</span>:</span></span><br><span class="line">    <span class="string">"""Overload of __getattr__ to return a driver for an IP or</span></span><br><span class="line"><span class="string">    hierarchy. Throws an `RuntimeError` if the overlay is not loaded.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">if</span> self.is_loaded():</span><br><span class="line">        <span class="keyword">return</span> getattr(self._ip_map, key)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">"Overlay not currently loaded"</span>)</span><br></pre></td></tr></table></figure>
-<p>attr就是属性，getattr是获取属性的方法。这里的self._ip_map是根据tcl获取的描述建立的_IPMap类对象，其中保存类ip、gpio等的描述，这样通过key就可以直接获取对应的属性了，其实_IPMap里也有一个getattr，输入key其实是在那里建立对应的IP的驱动，后面细讲。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">dma = overlay.axi_dma_0</span><br></pre></td></tr></table></figure></p>
-<p>上面例子中，axi_dma_0就是key，其对应的描述已经在建立Overlay对象overlay时就保存在属性_ip_map里了，这样直接执行<code>overlay.axi_dma_0</code>就会调用getattr方法，获取overlay._ip_map对应的属性（建立对应的DMA驱动）。</p>
-<h4 id="DefaultIP-类"><a href="#DefaultIP-类" class="headerlink" title="DefaultIP 类"></a>DefaultIP 类</h4><p>这是默认的IP驱动类，主要就是定义了一个mmio对象作为属性，然后包含read和write(对mmio里读写的简单封装)，用户自定义的驱动也要从这里继承，做自定义驱动的基类。提供了GPIO输出通道和中断输入属性。</p>
-<h5 id="属性-1"><a href="#属性-1" class="headerlink" title="属性"></a>属性</h5><ul>
-<li><strong>mmio</strong> : <code>pynq.MMIO</code><br>  设备的潜在MMIO驱动，MMIO是重之前讲的mmio.py导入的，可把外部设备映射为内存</li>
-<li><strong>_interrupts</strong> : <code>dict</code><br>  这个IP的PL.interrupt_pins的子集</li>
-<li><strong>_gpio</strong> : <code>dict</code><br>  这个IP的PL.gpio_dict的子集</li>
-</ul>
-<h5 id="init-1"><a href="#init-1" class="headerlink" title="init"></a>init</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, description)</span>:</span></span><br><span class="line">    self.mmio = MMIO(description[<span class="string">'phys_addr'</span>], description[<span class="string">'addr_range'</span>])</span><br><span class="line">    <span class="keyword">if</span> <span class="string">'interrupts'</span> <span class="keyword">in</span> description:</span><br><span class="line">        self._interrupts = description[<span class="string">'interrupts'</span>]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        self._interrupts = &#123;&#125;</span><br><span class="line">    <span class="keyword">if</span> <span class="string">'gpio'</span> <span class="keyword">in</span> description:</span><br><span class="line">        self._gpio = description[<span class="string">'gpio'</span>]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        self._gpio = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> interrupt, details <span class="keyword">in</span> self._interrupts.items():</span><br><span class="line">        setattr(self, interrupt, Interrupt(details[<span class="string">'fullpath'</span>]))</span><br><span class="line">    <span class="keyword">for</span> gpio, entry <span class="keyword">in</span> self._gpio.items():</span><br><span class="line">        gpio_number = GPIO.get_gpio_pin(entry[<span class="string">'index'</span>])</span><br><span class="line">        setattr(self, gpio, GPIO(gpio_number, <span class="string">'out'</span>))</span><br></pre></td></tr></table></figure>
-<p>根据描述（包含了ip_dict 和 hierarchy_dict）中的物理地址创建MMIO类对象，把该IP核映射到内存上，并可以直接读写。并根据有无中断和GPIO创建对应的interrupt和gpio属性。</p>
-<blockquote>
-<p>setattr(object, name, values) 给对象的属性赋值，若属性不存在，先创建再赋值。</p>
-</blockquote>
-<h5 id="read"><a href="#read" class="headerlink" title="read"></a>read</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read</span><span class="params">(self, offset=<span class="number">0</span>)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> self.mmio.read(offset)</span><br></pre></td></tr></table></figure>
-<p>从IP核读取，offset（int）是基于基地址的偏置，就是要读取的位置。</p>
-<h5 id="write"><a href="#write" class="headerlink" title="write"></a>write</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write</span><span class="params">(self, offset, value)</span>:</span></span><br><span class="line">    self.mmio.write(offset, value)</span><br></pre></td></tr></table></figure>
-<p>向IP核写入，offset（int）是基于基地址的偏置，value是要写入的数据，可以为int或bytes。</p>
-<h4 id="IPMap-类"><a href="#IPMap-类" class="headerlink" title="_IPMap 类"></a>_IPMap 类</h4><p>把IP, hierarches, interrupts, gpio的驱动保存为属性。</p>
-<h5 id="init-2"><a href="#init-2" class="headerlink" title="init"></a>init</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, desc)</span>:</span></span><br><span class="line">    self._description = desc</span><br></pre></td></tr></table></figure>
-<p>根据描述创建一个新的_IPMap类对象。</p>
-<h5 id="类内getattr"><a href="#类内getattr" class="headerlink" title="类内getattr"></a>类内getattr</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span><span class="params">(self, key)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> key <span class="keyword">in</span> self._description[<span class="string">'hierarchies'</span>]:</span><br><span class="line">        hierdescription = self._description[<span class="string">'hierarchies'</span>][key]</span><br><span class="line">        hierarchy = hierdescription[<span class="string">'driver'</span>](hierdescription)</span><br><span class="line">        setattr(self, key, hierarchy)</span><br><span class="line">        <span class="keyword">return</span> hierarchy</span><br><span class="line">    <span class="keyword">elif</span> key <span class="keyword">in</span> self._description[<span class="string">'ip'</span>]:</span><br><span class="line">        ipdescription = self._description[<span class="string">'ip'</span>][key]</span><br><span class="line">        driver = ipdescription[<span class="string">'driver'</span>](ipdescription)</span><br><span class="line">        setattr(self, key, driver)</span><br><span class="line">        <span class="keyword">return</span> driver</span><br><span class="line">    <span class="keyword">elif</span> key <span class="keyword">in</span> self._description[<span class="string">'interrupts'</span>]:</span><br><span class="line">        interrupt = Interrupt(</span><br><span class="line">            self._description[<span class="string">'interrupts'</span>][key][<span class="string">'fullpath'</span>])</span><br><span class="line">        setattr(self, key, interrupt)</span><br><span class="line">        <span class="keyword">return</span> interrupt</span><br><span class="line">    <span class="keyword">elif</span> key <span class="keyword">in</span> self._description[<span class="string">'gpio'</span>]:</span><br><span class="line">        gpio_index = self._description[<span class="string">'gpio'</span>][key][<span class="string">'index'</span>]</span><br><span class="line">        gpio_number = GPIO.get_gpio_pin(gpio_index)</span><br><span class="line">        gpio = GPIO(gpio_number, <span class="string">'out'</span>)</span><br><span class="line">        setattr(self, key, gpio)</span><br><span class="line">        <span class="keyword">return</span> gpio</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> AttributeError(</span><br><span class="line">            <span class="string">"Could not find IP or hierarchy &#123;&#125; in overlay"</span>.format(key))</span><br></pre></td></tr></table></figure>
-<p>这里的key就是name，会根据key是属于IP, hierarches, interrupts, gpio中的哪一个，获取对应的驱动DefaultIP  和DefaultHierarchy（如果没有自定义的话）。<br>比如key是axi_dma_0，可知是一个IP核的名字，在加载overlay是就会根据tcl生成的描述创建一个_IPMap类，其中解析到axi_dma_0时就会识别其是一个IP核，执行下面这一段代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ipdescription = self._description[<span class="string">'ip'</span>][key]</span><br><span class="line">driver = ipdescription[<span class="string">'driver'</span>](ipdescription)</span><br><span class="line">setattr(self, key, driver)</span><br></pre></td></tr></table></figure></p>
-<p>这里读取ip_dict的值可以看到包含这样一个键值对<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'axi_dma_0'</span>: &#123;<span class="string">'phys_addr'</span>: <span class="number">1077936128</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:ip:axi_dma:7.1'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'axi_dma_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">lib</span>.<span class="title">dma</span>.<span class="title">DMA</span>'&gt;&#125;</span></span><br></pre></td></tr></table></figure></p>
-<p>在执行<code>dma = overlay.axi_dma_0</code>时，通过Overlay里的getattr，再执行_IPMap的getattr，先获取key对应的驱动信息pynq.lib.dma.DMA，然后新建一个名为key（这里axi_dma_0）的属性，并把相应的信息保存在里面，这里axi_dma_0对应的驱动应该是DMA（继承自DefaultIP），所以这里相当于创建了一个DMA类的对象保存在，axi_dma_0属性中，再把对象赋给dma。</p>
-<blockquote>
-<p>setattr(object, name, values) 给对象的属性赋值，若属性不存在，先创建再赋值。</p>
-</blockquote>
-<h2 id="Overlay例子"><a href="#Overlay例子" class="headerlink" title="Overlay例子"></a>Overlay例子</h2><p>这是DAC比赛中给的例子，截取了部分进行分析。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">'/home/xilinx/jupyter_notebooks/DAC/overlay/Su.bit'</span>)</span><br><span class="line">dma = overlay.axi_dma_0</span><br><span class="line"></span><br><span class="line">xlnk = Xlnk()</span><br><span class="line">in_buffer = xlnk.cma_array(shape=(<span class="number">4</span>,), dtype=np.uint32)</span><br><span class="line">out_buffer = xlnk.cma_array(shape=(<span class="number">4</span>,), dtype=np.uint32)</span><br><span class="line"></span><br><span class="line">dma.sendchannel.transfer(in_buffer)</span><br><span class="line">dma.recvchannel.transfer(out_buffer) </span><br><span class="line">dma.sendchannel.wait()</span><br><span class="line">dma.recvchannel.wait()</span><br></pre></td></tr></table></figure></p>
-<p>首先根据Su.bit文件建立Overlay类的对象overlay。从程序上分析：</p>
-<ol>
-<li>调用Overlay的init进行初始化，生成overlay对象。传入的是Su.bit的绝对路径。</li>
-<li>自动获取该路径下同名的Su.tcl文件，根据_TCL类生成对象，就是对tcl解析。</li>
-<li><p>保存tcl中的ip_dict、gpio_dict、interrupt_controllers、interrupt_pins、hierarchy_dict、clock_dict为overlay的类属性，其中有一个dma的ip核，所以ip_dict中包含以下部分  </p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'axi_dma_0'</span>: &#123;<span class="string">'phys_addr'</span>: <span class="number">1077936128</span>, <span class="string">'addr_range'</span>: <span class="number">65536</span>, <span class="string">'type'</span>: <span class="string">'xilinx.com:ip:axi_dma:7.1'</span>, <span class="string">'state'</span>: <span class="keyword">None</span>, <span class="string">'interrupts'</span>: &#123;&#125;, <span class="string">'gpio'</span>: &#123;&#125;, <span class="string">'fullpath'</span>: <span class="string">'axi_dma_0'</span>, <span class="string">'driver'</span>: &lt;<span class="class"><span class="keyword">class</span> '<span class="title">pynq</span>.<span class="title">lib</span>.<span class="title">dma</span>.<span class="title">DMA</span>'&gt;&#125;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>根据ip_dict 和 hierarchy_dict建立_IPMap类对象，作为overlay._ip_map</p>
-</li>
-<li><code>dma = overlay.axi_dma_0</code><br>就会调用overlay的getattr方法，进而调用_IPMap的getattr，获取驱动描述pynq.lib.dma.DMA，建立overlay._ip_map.axi_dma_0属性，根据驱动描述pynq.lib.dma.DMA类（继承自DefaultIP）创建对应的ip驱动，既生成一个DMA类的对象，赋给overlay._ip_map.axi_dma_0属性，最后把该对象赋给dma。<br><a href="http://pynq.readthedocs.io/en/latest/overlay_design_methodology/overlay_tutorial.html?highlight=DefaultIP%20" target="_blank" rel="noopener">到底是哪里调用了DefaultIP可以参考这个教程</a></li>
-</ol>
-
-          
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>PYNQ板子分为PS（Processing System）和PL（Programmable Logic）部分，PS就是CPU，ARM Cortex-A9芯片，跑了Linux系统，可用JUpyter Notebooks打开。PL部分就是FPGA可编程逻辑，是ZYNQ-7020。<br>而overlay可以让PS和PL部分连起来，提供了接口让PS的python可以直接调用PL的Overlay。比如把外围设备封装成python库，就可以直接控制硬件了。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/21/PYNQ之overlay/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1686,56 +1402,14 @@
 
       
         
-          
-            <h3 id="MMIO概念"><a href="#MMIO概念" class="headerlink" title="MMIO概念"></a>MMIO概念</h3><p>MMIO（Memory-mapped I/O，内存映射I/O），与之对应的是PMIO（port-mapped I/O，端口映射I/O），是PC机在中央处理器（CPU）和外部设备之间执行输入输出操作的两种方法。<br>简单点说就是直接把外部设备映射为内存，CPU就可以访问地址就可以直接访问外围设备，通过MMIO就可以用python来配置FPGA上的寄存器，来控制各个IP核了。</p>
-<h2 id="mmio-py"><a href="#mmio-py" class="headerlink" title="mmio.py"></a>mmio.py</h2><p>这里主要根据PYNQ的mmio.py来看是怎么工作的，硬件上是ZYNQ芯片通过Axi-Lite总线控制其他IP核的。<br>这里只有MMIO一个类，来做读和写，比较简单。</p>
-<h3 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h3><ul>
-<li><strong>virt_base</strong> : <code>int</code><br>  虚拟基地址，The address of the page for the MMIO base address.</li>
-<li><strong>virt_offset</strong> : <code>int</code><br>  虚拟偏差，The offset of the MMIO base address from the virt_base.</li>
-<li><strong>base_addr</strong> : <code>int</code><br>  基地址，The base address, not necessarily page aligned.</li>
-<li><strong>length</strong> : <code>int</code><br>  地址范围的byte长度，The length in bytes of the address range.</li>
-<li><strong>debug</strong> : <code>bool</code><br>  是否开启调试，Turn on debug mode if it is True.</li>
-<li><strong>mmap_file</strong> : <code>file</code><br>  Underlying file object for MMIO mapping</li>
-<li><strong>mem</strong> : <code>mmap</code><br>  文件映射到内存时创建的对象，An mmap object created when mapping files to memory.</li>
-<li><strong>array</strong> : <code>numpy.ndarray</code><br>  A numpy view of the mapped range for efficient assignment</li>
-</ul>
-<h3 id="init"><a href="#init" class="headerlink" title="init"></a>init</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, base_addr, length=<span class="number">4</span>, debug=False)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> base_addr &lt; <span class="number">0</span> <span class="keyword">or</span> length &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">"Base address or length cannot be negative."</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#返回当前进程的有效用户ID</span></span><br><span class="line">    euid = os.geteuid()</span><br><span class="line">    <span class="keyword">if</span> euid != <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> EnvironmentError(<span class="string">'Root permissions required.'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Align the base address with the pages</span></span><br><span class="line">    self.virt_base = base_addr &amp; ~(mmap.PAGESIZE - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Calculate base address offset w.r.t the base address</span></span><br><span class="line">    self.virt_offset = base_addr - self.virt_base</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Storing the base address and length</span></span><br><span class="line">    self.base_addr = base_addr</span><br><span class="line">    self.length = length</span><br><span class="line"></span><br><span class="line">    self.debug = debug</span><br><span class="line">    self._debug(<span class="string">'MMIO(address, size) = (&#123;0:x&#125;, &#123;1:x&#125; bytes).'</span>,</span><br><span class="line">                self.base_addr, self.length)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Open file and mmap</span></span><br><span class="line">    self.mmap_file = os.open(<span class="string">'/dev/mem'</span>,</span><br><span class="line">                             os.O_RDWR | os.O_SYNC)</span><br><span class="line"></span><br><span class="line">    self.mem = mmap.mmap(self.mmap_file, self.length + self.virt_offset,</span><br><span class="line">                         mmap.MAP_SHARED,</span><br><span class="line">                         mmap.PROT_READ | mmap.PROT_WRITE,</span><br><span class="line">                         offset=self.virt_base)</span><br><span class="line"></span><br><span class="line">    self.array = np.frombuffer(self.mem, np.uint32,</span><br><span class="line">                               length &gt;&gt; <span class="number">2</span>, self.virt_offset)</span><br></pre></td></tr></table></figure>
-<p>返回一个新的MMIO对象</p>
-<h4 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h4><ul>
-<li><strong>base_addr</strong> : <code>int</code><br>  基地址，</li>
-<li><strong>length</strong> : <code>int</code><br>  长度，默认为4.</li>
-<li><strong>debug</strong> : <code>bool</code><br>  是否开启调试， 默认是False.</li>
-</ul>
-<h4 id="实现流程"><a href="#实现流程" class="headerlink" title="实现流程"></a>实现流程</h4><ol>
-<li>基地址和page对齐，作为虚拟基地址<br><code>self.virt_base = base_addr &amp; ~(mmap.PAGESIZE - 1)</code>  </li>
-<li>计算基地址和虚拟基地址的偏差，作为虚拟偏差<br><code>self.virt_offset = base_addr - self.virt_base</code>  </li>
-<li>储存基地址和长度</li>
-<li>打开文件和mmap<br><code>self.mmap_file = os.open(&#39;/dev/mem&#39;, os.O_RDWR | os.O_SYNC)</code><br>/dev/mem是linux物理内存的全映像，可以用来访问物理内存，按上面这样打开后就可以用mmap来访问物理内存以及外设的IO资源。<br><a href="http://blog.csdn.net/skyflying2012/article/details/47611399" target="_blank" rel="noopener">/dev/mem没那么简单</a></li>
-</ol>
-<blockquote>
-<p>mmap（Memory-mapped）内存映射，一般用来将物理地址映射为虚拟地址</p>
-</blockquote>
-<ol>
-<li>将数据内存转化为np数组<br><code>self.array = np.frombuffer(self.mem, np.uint32, length &gt;&gt; 2, self.virt_offset)</code></li>
-</ol>
-<blockquote>
-<p>np.frombuffer 将mem内存转化成np的数组，接下来只要读写数组就相当于读写内存了</p>
-</blockquote>
-<h3 id="read"><a href="#read" class="headerlink" title="read"></a>read</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">def read(self, offset=0, length=4):</span><br><span class="line">    if length != 4:</span><br><span class="line">        raise ValueError(&quot;MMIO currently only supports 4-byte reads.&quot;)</span><br><span class="line">    if offset &lt; 0:</span><br><span class="line">        raise ValueError(&quot;Offset cannot be negative.&quot;)</span><br><span class="line">    idx = offset &gt;&gt; 2</span><br><span class="line">    if offset % 4:</span><br><span class="line">        raise MemoryError(&apos;Unaligned read: offset must be multiple of 4.&apos;)</span><br><span class="line"></span><br><span class="line">    self._debug(&apos;Reading &#123;0&#125; bytes from offset &#123;1:x&#125;&apos;,</span><br><span class="line">                length, offset)</span><br><span class="line"></span><br><span class="line">    # Read data out</span><br><span class="line">    return int(self.array[idx])</span><br></pre></td></tr></table></figure>
-<p>从MMIO读取数据</p>
-<h4 id="参数-1"><a href="#参数-1" class="headerlink" title="参数"></a>参数</h4><ul>
-<li><strong>offset</strong> : <code>int</code><br>  相对于基地址的偏移量，从这里读取</li>
-<li><strong>length</strong> : <code>int</code><br>  数据分割的长度</li>
-</ul>
-<p><code>idx = offset &gt;&gt; 2</code><br>右移两位相当于除以4，因为是按4字节长度存成数组的，所以索引要除以4。</p>
-<h3 id="write"><a href="#write" class="headerlink" title="write"></a>write</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">def write(self, offset, data):</span><br><span class="line">    if offset &lt; 0:</span><br><span class="line">        raise ValueError(&quot;Offset cannot be negative.&quot;)</span><br><span class="line"></span><br><span class="line">    idx = offset &gt;&gt; 2</span><br><span class="line">    if offset % 4:</span><br><span class="line">        raise MemoryError(&apos;Unaligned write: offset must be multiple of 4.&apos;)</span><br><span class="line"></span><br><span class="line">    if type(data) is int:</span><br><span class="line">        self._debug(&apos;Writing 4 bytes to offset &#123;0:x&#125;: &#123;1:x&#125;&apos;,</span><br><span class="line">                    offset, data)</span><br><span class="line">        self.array[idx] = np.uint32(data)</span><br><span class="line">    elif type(data) is bytes:</span><br><span class="line">        length = len(data)</span><br><span class="line">        num_words = length &gt;&gt; 2</span><br><span class="line">        if length % 4:</span><br><span class="line">            raise MemoryError(&apos;Unaligned write: data length must be multiple of 4.&apos;)</span><br><span class="line">        buf = np.frombuffer(data, np.uint32, num_words, 0)</span><br><span class="line">        self.array[idx:idx + num_words] = buf</span><br><span class="line">    else:</span><br><span class="line">        raise ValueError(&quot;Data type must be int or bytes.&quot;)</span><br></pre></td></tr></table></figure>
-<p>写入数据到MIMO  </p>
-<h4 id="参数-2"><a href="#参数-2" class="headerlink" title="参数"></a>参数</h4><ul>
-<li><strong>offset</strong> : <code>int</code><br>  相对于基地址的偏移量，从这里写入</li>
-<li><strong>data</strong> : <code>int / bytes</code><br>  要写入到MMIO的数据，分成int整型和bytes字节型</li>
-</ul>
-
-          
+          <h3 id="MMIO概念"><a href="#MMIO概念" class="headerlink" title="MMIO概念"></a>MMIO概念</h3><p>MMIO（Memory-mapped I/O，内存映射I/O），与之对应的是PMIO（port-mapped I/O，端口映射I/O），是PC机在中央处理器（CPU）和外部设备之间执行输入输出操作的两种方法。<br>简单点说就是直接把外部设备映射为内存，CPU就可以访问地址就可以直接访问外围设备，通过MMIO就可以用python来配置FPGA上的寄存器，来控制各个IP核了。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/21/PYNQ之mmio/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1852,49 +1526,14 @@
 
       
         
-          
-            <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>AXI协议严格的讲是一个点对点的主从接口协议，当多个外设需要互相交互数据时，我们需要加入一个AXI Interconnect模块（AXI互联），作用是提供将一个或多个AXI主设备连接到一个或多个AXI从设备的一种交换机制。包含多个LogicCORE IP核实例（infrastructure cores，基础核），会自动引入infrastructure cores来让任意AXI主设备和AXI从设备连接连接。<br>后来感觉不需要单独写一篇来介绍，只需要理解为可以连接多个主从就行了，比如需要用PYNQ控制多个IP核，类似分线器的功能。</p>
-<h3 id="AXI-Infrastructure-Cores"><a href="#AXI-Infrastructure-Cores" class="headerlink" title="AXI Infrastructure Cores"></a>AXI Infrastructure Cores</h3><ul>
-<li><strong>AXI Crossbar</strong> 将一个或者多个相似的内存映射的主设备连接到一个或者多个相似的内 存映射的从设备。  </li>
-<li><em>*AXI Data Width Converter</em> *将一个内存映射的主设备连接到一个数据位宽不同的内存 映射的从设备。  </li>
-<li><strong>AXI Clock Converter</strong> 将一个内存映射的主设备连接到一个不同时钟域的内存映射的 从设备。  </li>
-<li><strong>AXI Protocol Converter</strong> 将AXI4、AXI3或者AXI4-Lite协议的主设备连接到不同AXI协 议的内存映射从设备。  </li>
-<li><strong>AXI Data FIFO</strong> 在内存映射的主设备与从设备之间连接一些FIFO缓存。  </li>
-<li><strong>AXI Register Slice</strong> 在内存映射的主从设备之间插入一组并行的寄存器，典型目的是为了打断关键路径。  </li>
-<li><strong>AXI MMU</strong> 为AXI互联模块提供地址范围译码和设备从映射服务。  </li>
-</ul>
-<p>因为我要研究怎么控制多个IP核，这里只介绍一下我需要用到的几个cores。  </p>
-<h4 id="AXI-Crossbar"><a href="#AXI-Crossbar" class="headerlink" title="AXI Crossbar"></a>AXI Crossbar</h4><ul>
-<li>只有在多个Master或多个Slave时才会用到。（最多可以有16个M和16个S）</li>
-<li>可选互联架构（Selectable Interconnect Architecture）<ul>
-<li>Crossbar mode（性能最优）<ul>
-<li>Shared-Address, Multiple-Data （SAMD共享地址多路数据）</li>
-<li>读写数据通道都是并行的crossbar路径。当多个读或写数据源需要传输的时候，数据可以彼此独立、并行的传输。</li>
-<li>根据配置连接映射来减少crossbar 数据路径，来减少资源的占用</li>
-<li>共享的写地址仲裁器, 加上一个共享的读地址仲裁器。</li>
-<li>只有在AXI互联模块被配置被AXI4或者AXI3 协议时，Crossbar模式才有效。</li>
-</ul>
-</li>
-<li>Shared Access mode （面积最优）<ul>
-<li>共享的读数据路径,共享的写数据路径和一个共享的读些地址路径</li>
-<li>一次传输仅支持一个事务，使用资源最少 </li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="AXI-Protocol-Converter"><a href="#AXI-Protocol-Converter" class="headerlink" title="AXI Protocol Converter"></a>AXI Protocol Converter</h4><ul>
-<li>AXI4、AXI3 到 AXI4-Lite 的协议转换</li>
-<li>AXI4 到 AXI3 的协议转换</li>
-</ul>
-<h3 id="使用模式"><a href="#使用模式" class="headerlink" title="使用模式"></a>使用模式</h3><ul>
-<li>N-to-1 interconnect<br>  多个主设备仲裁访问一个从设备，比如内存控制器</li>
-<li>1-to-N interconnect<br>  一个主设备访问多个从设备，比如处理器访问多个内存映射</li>
-<li>N-to-M interconnect(Crossbar Mode)<br>  特点是共享内存，多路数据</li>
-<li>M-to-N interconnect(Shared Access Mode)</li>
-</ul>
-
-          
+          <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>AXI协议严格的讲是一个点对点的主从接口协议，当多个外设需要互相交互数据时，我们需要加入一个AXI Interconnect模块（AXI互联），作用是提供将一个或多个AXI主设备连接到一个或多个AXI从设备的一种交换机制。包含多个LogicCORE IP核实例（infrastructure cores，基础核），会自动引入infrastructure cores来让任意AXI主设备和AXI从设备连接连接。<br>后来感觉不需要单独写一篇来介绍，只需要理解为可以连接多个主从就行了，比如需要用PYNQ控制多个IP核，类似分线器的功能。<br></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/21/PYNQ之AXI-Interconnect/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -2183,6 +1822,323 @@
 
   
 
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
 
 
 
@@ -2197,9 +2153,35 @@
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
 
   
 
+  
+
+
+  <!-- 背景动画 -->
   
 
 </body>
