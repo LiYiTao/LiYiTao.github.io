@@ -105,17 +105,17 @@
 
 
 
-<meta name="description" content="主要做学习笔记，也记录一些想法">
+<meta name="description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 <meta property="og:type" content="website">
-<meta property="og:title" content="分类">
-<meta property="og:url" content="http://tao.github.io/categories/index.html">
+<meta property="og:title" content="关键时间节点">
+<meta property="og:url" content="http://tao.github.io/timenode/index.html">
 <meta property="og:site_name" content="涛的世界线">
-<meta property="og:description" content="主要做学习笔记，也记录一些想法">
+<meta property="og:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-18T08:59:33.003Z">
+<meta property="og:updated_time" content="2018-01-24T05:13:01.452Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="分类">
-<meta name="twitter:description" content="主要做学习笔记，也记录一些想法">
+<meta name="twitter:title" content="关键时间节点">
+<meta name="twitter:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 
 
 
@@ -143,7 +143,7 @@
 
 
 
-  <link rel="canonical" href="http://tao.github.io/categories/"/>
+  <link rel="canonical" href="http://tao.github.io/timenode/"/>
 
 
 
@@ -388,8 +388,9 @@
       
 
       
-        <h2 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">input_shape &#123;</span><br><span class="line">    dim: 1</span><br><span class="line">    dim: 3</span><br><span class="line">    dim: 224</span><br><span class="line">    dim: 224</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>数据输入层，<code>(width, height, channels, num)</code>表示分别（宽，长，通道数，图像数）。这里的<code>(1, 3, 224, 224)</code>就表示输入1张3通道的图片，图片大小个224 x 224</p>
+        <p>Faster-rcnn是基于caffe实现，caffe中的数据和参数都是以blob形式定义的，<code>(width, height, channels, num)</code>分别表示（宽，长，通道数，图像数）的四维数组，下文都用这个数据格式。<br><img src="/2018/02/06/ZF网络结构/zf.png" alt="image"></p>
+<h2 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">input_shape &#123;</span><br><span class="line">    dim: 1</span><br><span class="line">    dim: 3</span><br><span class="line">    dim: 224</span><br><span class="line">    dim: 224</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>数据输入层，这里的<code>(1, 3, 224, 224)</code>就表示输入1张3通道的图片，图片大小个224 x 224</p>
 <h2 id="im-info"><a href="#im-info" class="headerlink" title="im_info"></a>im_info</h2><p>对于一幅任意大小的<code>P*Q</code>图像，传入Fsater Rcnn前首先reshape到<code>M*N</code>大小，<code>im_info=[M, N, scale_factor]</code>则保存了此次缩放的所有信息。然后经过Conv Layers，经过4次pooling变为WxH=(M/16)x(N/16)大小，其中feature_stride=16则保存了该信息，用于后面计算anchor偏移量。<br><img src="/2018/02/06/ZF网络结构/info.jpg" alt="image"></p>
 <a id="more"></a>
 <h2 id="Convolution"><a href="#Convolution" class="headerlink" title="Convolution"></a>Convolution</h2><p>卷积是图像处理最基本的操作，就是矩阵对应点相乘相加。  </p>
@@ -417,8 +418,8 @@
 <h3 id="参数-1"><a href="#参数-1" class="headerlink" title="参数"></a>参数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">lrn_param &#123;</span><br><span class="line">	local_size: 3</span><br><span class="line">	alpha: 0.00005</span><br><span class="line">	beta: 0.75</span><br><span class="line">	norm_region: WITHIN_CHANNEL</span><br><span class="line">    engine: CAFFE</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>norm_region :<ul>
-<li>WITHIN_CHANNEL : 通道间的归一化，局部区域形状为1 <em> local_size </em> local_size</li>
-<li>ACROSS_CHANNELS : 通道内的归一化，局部区域块形状为local_size <em> 1 </em> 1</li>
+<li>WITHIN_CHANNEL : 通道间的归一化，局部区域形状为local_size <em> 1 </em> 1</li>
+<li>ACROSS_CHANNELS : 通道内的归一化，局部区域块形状为1 <em> local_size </em> local_size</li>
 </ul>
 </li>
 <li>local_size : <ul>
@@ -429,7 +430,8 @@
 <li>alpha : 缩放因子</li>
 <li>beta : 指数项</li>
 </ul>
-<h3 id="计算方法-2"><a href="#计算方法-2" class="headerlink" title="计算方法"></a>计算方法</h3><p>$f(x)=x\div(k+(\alpha/n)\sum_ix_i^2)^\beta$<br>n就是local_size，$x_i$是对区域内每个像素点，x是该像素点，因为是每个像素点归一化，不改变大小，输出为(1, 96, 112, 112)</p>
+<p><img src="/2018/02/06/ZF网络结构/lrn.jpg" alt="image"></p>
+<h3 id="计算方法-2"><a href="#计算方法-2" class="headerlink" title="计算方法"></a>计算方法</h3><p>$f(x)=x\div(1+(\alpha/n)\sum_ix_i^2)^\beta$<br>n就是local_size，$x_i$是对区域内每个像素点，x是该像素点，因为是每个像素点归一化，不改变大小，输出为(1, 96, 112, 112)</p>
 <h2 id="Pooling"><a href="#Pooling" class="headerlink" title="Pooling"></a>Pooling</h2><p>池化的本质是采样，常见的有取最值，取均值。</p>
 <h3 id="参数-2"><a href="#参数-2" class="headerlink" title="参数"></a>参数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pooling_param &#123;</span><br><span class="line">	kernel_size: 3</span><br><span class="line">	stride: 2</span><br><span class="line">	pad: 1</span><br><span class="line">	pool: MAX</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
@@ -470,7 +472,7 @@
 </blockquote>
 </li>
 <li>下面那条线是用于计算anchors的bounding box regression的偏移量，以获得精确的proposal。它的维度是（1，36，15，15）。<blockquote>
-<p>36 = 4(坐标偏移) x 9(anchors)</p>
+<p>36 = 4(坐标偏移) x 9(anchors)<br>这两层的计算其实就是分别卷积18和36个1*1的kernel。</p>
 </blockquote>
 </li>
 <li>而最后的proposcal层则负责综合foreground anchors和bounding box regression偏移量获取proposal，同时剔除太小和超出边界的propocals。<blockquote>
@@ -485,12 +487,14 @@
 <li>spatial_scale : 表示缩放的大小（映射回原图）</li>
 </ul>
 <h3 id="计算过程-1"><a href="#计算过程-1" class="headerlink" title="计算过程"></a>计算过程</h3><p>注意这里要先根据spatial_scale映射回原来的大小，再对每一块进行最大池化。<br>这样若输入为(1, 256, 15, 15)，输出为(1, 256, 6, 6)</p>
-<h2 id="InnerProduct"><a href="#InnerProduct" class="headerlink" title="InnerProduct"></a>InnerProduct</h2><p>全连接层，就是任意两个神经元都有参数连接。</p>
-<h3 id="参数-6"><a href="#参数-6" class="headerlink" title="参数"></a>参数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">inner_product_param &#123;</span><br><span class="line">    num_output: 4096</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Dropout"><a href="#Dropout" class="headerlink" title="Dropout"></a>Dropout</h2><p>Dropout是为了防止网络过拟合，在训练时随机让网络的某些节点不工作（输出置零）。为了保证网络的每一层在训练阶段和测试阶段数据分布相同，训练完要行rescale，也就是乘以1/(1-p)。测试时就可以直接去掉dropout层。<br><img src="/2018/02/06/ZF网络结构/dropout.png" alt="image"></p>
+<h3 id="参数-6"><a href="#参数-6" class="headerlink" title="参数"></a>参数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">dropout_param &#123;</span><br><span class="line">    dropout_ratio: 0.5</span><br><span class="line">    scale_train: false</span><br><span class="line">  &#125;</span><br><span class="line">``` </span><br><span class="line">+ dropout_ratio : 每个输出节点置0的概率</span><br><span class="line">+ scale_train : 表示当前是训练还是测试</span><br><span class="line"></span><br><span class="line">## InnerProduct</span><br><span class="line">全连接层，就是任意两个神经元都有参数连接。</span><br><span class="line"></span><br><span class="line">### 参数</span><br></pre></td></tr></table></figure>
+<p>inner_product_param {<br>    num_output: 4096<br>}<br>```</p>
 <ul>
 <li>num_output : 输出尺度</li>
 </ul>
 <p>如果输入为(1, 256, 6, 6), 输出为(1, 4096)，参数为(255x6x6)x4096。</p>
+<h2 id="zf网络结构"><a href="#zf网络结构" class="headerlink" title="zf网络结构"></a>zf网络结构</h2><p><img src="/2018/02/06/ZF网络结构/zf.jpg" alt="image"></p>
 
       
     </div>
@@ -530,6 +534,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/11/FPGA加速架构设计/" rel="prev" title="FPGA加速架构设计">
+                FPGA加速架构设计 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -607,7 +615,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-count">17</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -620,7 +628,7 @@
                 
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
-                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-count">7</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -653,7 +661,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Input"><span class="nav-number">1.</span> <span class="nav-text">Input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#im-info"><span class="nav-number">2.</span> <span class="nav-text">im_info</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Convolution"><span class="nav-number">3.</span> <span class="nav-text">Convolution</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数"><span class="nav-number">3.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算方法"><span class="nav-number">3.2.</span> <span class="nav-text">计算方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#大小计算"><span class="nav-number">3.2.1.</span> <span class="nav-text">大小计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#卷积计算"><span class="nav-number">3.2.2.</span> <span class="nav-text">卷积计算</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relu"><span class="nav-number">4.</span> <span class="nav-text">Relu</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算方法-1"><span class="nav-number">4.1.</span> <span class="nav-text">计算方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LRN"><span class="nav-number">5.</span> <span class="nav-text">LRN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-1"><span class="nav-number">5.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算方法-2"><span class="nav-number">5.2.</span> <span class="nav-text">计算方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pooling"><span class="nav-number">6.</span> <span class="nav-text">Pooling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-2"><span class="nav-number">6.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算方法-3"><span class="nav-number">6.2.</span> <span class="nav-text">计算方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#大小计算-1"><span class="nav-number">6.2.1.</span> <span class="nav-text">大小计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#池化计算"><span class="nav-number">6.2.2.</span> <span class="nav-text">池化计算</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reshape"><span class="nav-number">7.</span> <span class="nav-text">Reshape</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-3"><span class="nav-number">7.1.</span> <span class="nav-text">参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Softmax"><span class="nav-number">8.</span> <span class="nav-text">Softmax</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算方法-4"><span class="nav-number">8.1.</span> <span class="nav-text">计算方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python-Proposal"><span class="nav-number">9.</span> <span class="nav-text">Python: Proposal</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-4"><span class="nav-number">9.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算过程"><span class="nav-number">9.2.</span> <span class="nav-text">计算过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ROIPooling"><span class="nav-number">10.</span> <span class="nav-text">ROIPooling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-5"><span class="nav-number">10.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算过程-1"><span class="nav-number">10.2.</span> <span class="nav-text">计算过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnerProduct"><span class="nav-number">11.</span> <span class="nav-text">InnerProduct</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-6"><span class="nav-number">11.1.</span> <span class="nav-text">参数</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Input"><span class="nav-number">1.</span> <span class="nav-text">Input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#im-info"><span class="nav-number">2.</span> <span class="nav-text">im_info</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Convolution"><span class="nav-number">3.</span> <span class="nav-text">Convolution</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数"><span class="nav-number">3.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算方法"><span class="nav-number">3.2.</span> <span class="nav-text">计算方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#大小计算"><span class="nav-number">3.2.1.</span> <span class="nav-text">大小计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#卷积计算"><span class="nav-number">3.2.2.</span> <span class="nav-text">卷积计算</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relu"><span class="nav-number">4.</span> <span class="nav-text">Relu</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算方法-1"><span class="nav-number">4.1.</span> <span class="nav-text">计算方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LRN"><span class="nav-number">5.</span> <span class="nav-text">LRN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-1"><span class="nav-number">5.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算方法-2"><span class="nav-number">5.2.</span> <span class="nav-text">计算方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pooling"><span class="nav-number">6.</span> <span class="nav-text">Pooling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-2"><span class="nav-number">6.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算方法-3"><span class="nav-number">6.2.</span> <span class="nav-text">计算方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#大小计算-1"><span class="nav-number">6.2.1.</span> <span class="nav-text">大小计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#池化计算"><span class="nav-number">6.2.2.</span> <span class="nav-text">池化计算</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reshape"><span class="nav-number">7.</span> <span class="nav-text">Reshape</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-3"><span class="nav-number">7.1.</span> <span class="nav-text">参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Softmax"><span class="nav-number">8.</span> <span class="nav-text">Softmax</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算方法-4"><span class="nav-number">8.1.</span> <span class="nav-text">计算方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python-Proposal"><span class="nav-number">9.</span> <span class="nav-text">Python: Proposal</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-4"><span class="nav-number">9.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算过程"><span class="nav-number">9.2.</span> <span class="nav-text">计算过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ROIPooling"><span class="nav-number">10.</span> <span class="nav-text">ROIPooling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-5"><span class="nav-number">10.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算过程-1"><span class="nav-number">10.2.</span> <span class="nav-text">计算过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dropout"><span class="nav-number">11.</span> <span class="nav-text">Dropout</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-6"><span class="nav-number">11.1.</span> <span class="nav-text">参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zf网络结构"><span class="nav-number">12.</span> <span class="nav-text">zf网络结构</span></a></li></ol></div>
             
 
           </div>

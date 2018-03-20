@@ -105,17 +105,17 @@
 
 
 
-<meta name="description" content="主要做学习笔记，也记录一些想法">
+<meta name="description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 <meta property="og:type" content="website">
-<meta property="og:title" content="分类">
-<meta property="og:url" content="http://tao.github.io/categories/index.html">
+<meta property="og:title" content="关键时间节点">
+<meta property="og:url" content="http://tao.github.io/timenode/index.html">
 <meta property="og:site_name" content="涛的世界线">
-<meta property="og:description" content="主要做学习笔记，也记录一些想法">
+<meta property="og:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-18T08:59:33.003Z">
+<meta property="og:updated_time" content="2018-01-24T05:13:01.452Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="分类">
-<meta name="twitter:description" content="主要做学习笔记，也记录一些想法">
+<meta name="twitter:title" content="关键时间节点">
+<meta name="twitter:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 
 
 
@@ -143,7 +143,7 @@
 
 
 
-  <link rel="canonical" href="http://tao.github.io/categories/"/>
+  <link rel="canonical" href="http://tao.github.io/timenode/"/>
 
 
 
@@ -308,6 +308,383 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/22/控制多个IP核/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李一涛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/22/控制多个IP核/" itemprop="url">控制多个IP核</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-22T18:08:10+08:00">2018-01-22</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>尝试用ZYNQ控制多个IP核，之前已经了解了AXI-interconnect的作用，可以通过它连接多个Master和Slaver，之前是通过ZYNQ两端接axi-interconnect连DMA的，现在尝试把两个axi-interconnect都增加Master和Slaver，再增加一个DMA串FIFO。接好时钟和复位。自动设置，配置好两个DMA的地址。开始测试。<br>help(overlay)可以看到识别出了两个IP核都是DMA类型  </p>
+<ul>
+<li>axi_dma_0 : pynq.lib.dma.DMA</li>
+<li>axi_dma_1 : pynq.lib.dma.DMA</li>
+</ul>
+<p>因为axi_dma_0接的是vivado提供的ip核AXI4-Stream DATA FIFO，而axi_dma_1接的是我自己写的FIFO，用如下代码分别创建两个dma对象，可以获得不同的输出，证明是达到控制不同IP核的效果。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dma = overlay.axi_dma_0</span><br><span class="line">dma1 = overlay.axi_dma_1</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/22/控制多个IP核/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/21/PYNQ之overlay/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李一涛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/21/PYNQ之overlay/" itemprop="url">PYNQ之overlay</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-21T21:19:38+08:00">2018-01-21</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>PYNQ板子分为PS（Processing System）和PL（Programmable Logic）部分，PS就是CPU，ARM Cortex-A9芯片，跑了Linux系统，可用JUpyter Notebooks打开。PL部分就是FPGA可编程逻辑，是ZYNQ-7020。<br>而overlay可以让PS和PL部分连起来，提供了接口让PS的python可以直接调用PL的Overlay。比如把外围设备封装成python库，就可以直接控制硬件了。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/21/PYNQ之overlay/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/21/PYNQ之mmio/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李一涛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/21/PYNQ之mmio/" itemprop="url">PYNQ之mmio</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-21T20:20:40+08:00">2018-01-21</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="MMIO概念"><a href="#MMIO概念" class="headerlink" title="MMIO概念"></a>MMIO概念</h3><p>MMIO（Memory-mapped I/O，内存映射I/O），与之对应的是PMIO（port-mapped I/O，端口映射I/O），是PC机在中央处理器（CPU）和外部设备之间执行输入输出操作的两种方法。<br>简单点说就是直接把外部设备映射为内存，CPU就可以访问地址就可以直接访问外围设备，通过MMIO就可以用python来配置FPGA上的寄存器，来控制各个IP核了。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/21/PYNQ之mmio/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -867,7 +1244,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-count">17</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -880,7 +1257,7 @@
                 
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
-                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-count">7</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>

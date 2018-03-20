@@ -105,17 +105,17 @@
 
 
 
-<meta name="description" content="主要做学习笔记，也记录一些想法">
+<meta name="description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 <meta property="og:type" content="website">
-<meta property="og:title" content="分类">
-<meta property="og:url" content="http://tao.github.io/categories/index.html">
+<meta property="og:title" content="关键时间节点">
+<meta property="og:url" content="http://tao.github.io/timenode/index.html">
 <meta property="og:site_name" content="涛的世界线">
-<meta property="og:description" content="主要做学习笔记，也记录一些想法">
+<meta property="og:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-18T08:59:33.003Z">
+<meta property="og:updated_time" content="2018-01-24T05:13:01.452Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="分类">
-<meta name="twitter:description" content="主要做学习笔记，也记录一些想法">
+<meta name="twitter:title" content="关键时间节点">
+<meta name="twitter:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 
 
 
@@ -143,7 +143,7 @@
 
 
 
-  <link rel="canonical" href="http://tao.github.io/categories/"/>
+  <link rel="canonical" href="http://tao.github.io/timenode/"/>
 
 
 
@@ -324,6 +324,588 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/03/20/EAST场景文本检测/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李一涛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/20/EAST场景文本检测/" itemprop="url">EAST场景文本检测</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-20T14:15:27+08:00">2018-03-20</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="总流程"><a href="#总流程" class="headerlink" title="总流程"></a>总流程</h2><ol>
+<li>全卷积产生文本的行级预测（可旋转的矩形或四边形）</li>
+<li>二值化和非极大值抑制产生最终的结果</li>
+</ol>
+<h2 id="pipline流水-流程"><a href="#pipline流水-流程" class="headerlink" title="pipline流水(流程)"></a>pipline流水(流程)</h2><p> <img src="/2018/03/20/EAST场景文本检测/pipline.png" alt="image">  </p>
+<h3 id="Multi-channel-FCN"><a href="#Multi-channel-FCN" class="headerlink" title="Multi-channel FCN"></a>Multi-channel FCN</h3><p>图片输入FCN，生成多通道的，像素级别的分数图(score map)和几何尺寸(geometry)。<br>预测通道之一是分数图，像素值在[0,1]。其余通道表示视图中围绕文字的每个像素的几何尺寸。分数代表了在同样的位置预测的几何尺寸的置信度。<br>我们设计了两种几何图形，并设计了不同的损失函数：</p>
+<ul>
+<li>rotated box <strong>RBOX</strong> ：旋转矩形</li>
+<li>quadrangle <strong>QUAD</strong>：四边形<h3 id="Thresholding-amp-NMS"><a href="#Thresholding-amp-NMS" class="headerlink" title="Thresholding &amp; NMS"></a>Thresholding &amp; NMS</h3>阈值应用于每个区域，其中分数超过预定义阈值的几何形状被认为是有效的，并且保存为稍后的非极大值抵制。NMS之后的结果被认为是管道的最终输出。</li>
+</ul>
+<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p> <img src="/2018/03/20/EAST场景文本检测/structure.png" alt="image"><br>分成三部分</p>
+<h3 id="1-特征提取器"><a href="#1-特征提取器" class="headerlink" title="1. 特征提取器"></a>1. <strong>特征提取器</strong></h3><p>可以是一个使用ImageNet数据集预训练的卷积层与池化层交替的卷积神经网络，代码里改成了<code>ResNet-50</code>。</p>
+<h3 id="2-特征合并分支"><a href="#2-特征合并分支" class="headerlink" title="2. 特征合并分支"></a>2. <strong>特征合并分支</strong></h3><p>如上图，<code>fi</code>是提取的特征图，<code>h3</code>是每层合并后的特征图。<br><code>unpool</code>放大两倍，变成一样尺寸再合并。<br><code>1X1 conv</code>是为了减少通道数。[1X1, 128]，表示输出有128通道。<br>最后一个合并后，加一个<code>3X3 conv</code>，就送到输出层了。</p>
+<blockquote>
+<p>unpool：反池化<br>不同通道沿着axis的连结不理解？加一起？</p>
+</blockquote>
+<h3 id="3-输出层"><a href="#3-输出层" class="headerlink" title="3. 输出层"></a>3. <strong>输出层</strong></h3><p>最后的输出层通过几个<code>conv 1x1</code>将特征层的32通道映射到一个<code>Fs</code>分数图和一个<code>Fg</code>多通道的几何信息图。几何信息图有 <strong>RBOX</strong> 和 <strong>QUAD</strong> 。</p>
+<blockquote>
+<p>RBOX ：[上，右，下，左，角度]，每个像素点到四边的距离<br>QUAD ：8个数字来表示四个顶点到像素点的坐标位移</p>
+</blockquote>
+<p><img src="/2018/03/20/EAST场景文本检测/map.png" alt="image"><br>这样最后会生成一个分数图和几何信息图（深度为5），相当于每个点都有两个信息<strong>分数</strong>，<strong>位置</strong>。</p>
+<h2 id="标签生成"><a href="#标签生成" class="headerlink" title="标签生成"></a>标签生成</h2><h2 id="回归"><a href="#回归" class="headerlink" title="回归"></a>回归</h2><p>这部分论文上面没有讲，其他地方看到的，作为补充。</p>
+<h3 id="间接回归-amp-直接回归"><a href="#间接回归-amp-直接回归" class="headerlink" title="间接回归 &amp; 直接回归"></a>间接回归 &amp; 直接回归</h3><p><img src="/2018/03/20/EAST场景文本检测/a.png" alt="image"><br><img src="/2018/03/20/EAST场景文本检测/b.png" alt="image">   </p>
+<ul>
+<li>间接回归<br>一般像faster rcnn，ssd这样的框架都会预设几个或者几十个anchors或者叫defaultbox的框，如左边蓝色的虚线框，然后基于蓝色框对绿色框回归，回归目标是相对位移，长宽比例等。  </li>
+<li>直接回归<br>就是直接对绿色框进行回归，回归的目标可以是当前点相对ground truth四个顶点的距离关系，如右图，或者是我们的RBOX那种。</li>
+</ul>
+<h3 id="本文回归"><a href="#本文回归" class="headerlink" title="本文回归"></a>本文回归</h3><p><img src="/2018/03/20/EAST场景文本检测/map.png" alt="image"><br>左边的黄色虚线框表示的真实值，粉色的实线框是拟合的旋转矩形。红、蓝、绿、土黄箭头表示的就是是要回归的目标，也就是点到四条边的距离，虽然回归的变量只需要4个，但是还需要回归角度。</p>
+<blockquote>
+<p><a href="http://blog.csdn.net/peaceinmind/article/details/78713464" target="_blank" rel="noopener">参考网址</a></p>
+</blockquote>
+<h2 id="损失函数-LOSS"><a href="#损失函数-LOSS" class="headerlink" title="损失函数 LOSS"></a>损失函数 LOSS</h2><p>损失函数为：<br>$L = L_s + \lambda_g L_g$<br><code>Ls</code>和<code>Lg</code>分别表示分数损失和几何损失，lambda是权重。</p>
+<h3 id="分数-LOSS"><a href="#分数-LOSS" class="headerlink" title="分数 LOSS"></a>分数 LOSS</h3><p>用了<strong>类平衡交叉熵</strong>。<br> <img src="/2018/03/20/EAST场景文本检测/ls.png" alt="image"><br> <code>Y^</code>表示预测值，<code>Y*</code>表示真实值，<code>beta</code>是平衡因子。</p>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/27223959" target="_blank" rel="noopener">交叉熵</a></p>
+</blockquote>
+<h3 id="几何-LOSS"><a href="#几何-LOSS" class="headerlink" title="几何 LOSS"></a>几何 LOSS</h3><h4 id="RBOX"><a href="#RBOX" class="headerlink" title="RBOX"></a>RBOX</h4><p>$L_g = L<em>AABB + \lambda</em>\theta L_\theta$  </p>
+<ul>
+<li>L_AABB<br>使用IoU损失，就是交集比并集。算面积，公式懒得打了比较简单。</li>
+<li>L<em>theta<br>$L</em>\theta = 1 - cos( \hat\theta + \theta* )$</li>
+</ul>
+<h4 id="QUAD"><a href="#QUAD" class="headerlink" title="QUAD"></a>QUAD</h4><blockquote>
+<p>不用的话先不看了</p>
+</blockquote>
+<h2 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h2><p>用的是<code>ADAM</code>的梯度下降，自适应时刻估计方法（Adaptive Moment Estimation）</p>
+<blockquote>
+<p><a href="http://ruder.io/optimizing-gradient-descent/" target="_blank" rel="noopener">各种梯度下降合集</a></p>
+</blockquote>
+<h2 id="局部感知-NMS"><a href="#局部感知-NMS" class="headerlink" title="局部感知 NMS"></a>局部感知 NMS</h2><p>Locality-Aware NMS，文章作者写的C++代码，和普通的NMS不一样，说是取<strong>平均</strong>而不是<strong>选择</strong>，没有细看。</p>
+<blockquote>
+<p>NMS：非极大值抑制算法的本质是搜索局部极大值，抑制非极大值元素。<br>思路：迭代所有的点，迭代每一个点的时候判断该点是否符合局部最大值的条件。</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/03/14/DAC问题讨论/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李一涛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/14/DAC问题讨论/" itemprop="url">DAC问题讨论</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-14T17:38:07+08:00">2018-03-14</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="1-关于PS部分可以处理什么"><a href="#1-关于PS部分可以处理什么" class="headerlink" title="1.关于PS部分可以处理什么"></a>1.关于PS部分可以处理什么</h1><h2 id="Regarding-PS-PL-partition"><a href="#Regarding-PS-PL-partition" class="headerlink" title="Regarding PS/PL partition"></a>Regarding PS/PL partition</h2><h3 id="Q"><a href="#Q" class="headerlink" title="Q"></a>Q</h3><p>之前要求大部分功能要再PL上实现，PS上的计算被限制。我觉得可以自己优化软硬件协同设计，只要达到目的就好。<br>有一些再FPGA上实现没有好处的，想放在软件上实现。</p>
+<h3 id="A"><a href="#A" class="headerlink" title="A"></a>A</h3><p>的确协同设计会增加性能，但比赛本身是要探索卷积神经网络在FPGA上的性能，请遵守当前的规定。<br>（在PS部分只能进行resize，其他预处理都不可以）</p>
+<h2 id="Image-conversion-on-PS"><a href="#Image-conversion-on-PS" class="headerlink" title="Image conversion on PS"></a>Image conversion on PS</h2><h3 id="Q-1"><a href="#Q-1" class="headerlink" title="Q"></a>Q</h3><p>可以再PS部分把jpeg转化成RGB格式，再送到PL吗？</p>
+<h3 id="A-1"><a href="#A-1" class="headerlink" title="A"></a>A</h3><p>可以</p>
+<h2 id="FPGA-PS-‘resize’"><a href="#FPGA-PS-‘resize’" class="headerlink" title="FPGA PS ‘resize’"></a>FPGA PS ‘resize’</h2><h3 id="Q-2"><a href="#Q-2" class="headerlink" title="Q"></a>Q</h3><p>是只能用resize函数吗？还是我们可以把数据分割成块，再送到PL</p>
+<h3 id="A-2"><a href="#A-2" class="headerlink" title="A"></a>A</h3><p>在PS可以resize和预处理，排序和转置也是允许的</p>
+<h2 id="Recorded-webinar"><a href="#Recorded-webinar" class="headerlink" title="Recorded webinar"></a>Recorded webinar</h2><p><a href="https://pitt.app.box.com/s/subqmrde5mfrvmgqxzcrn22n5afk8pyk" target="_blank" rel="noopener">第一次会议的录像</a></p>
+<blockquote>
+<p>最新版本指出，不限制PS和PL部分处理什么了</p>
+</blockquote>
+<h1 id="2-关于参考设计的疑问"><a href="#2-关于参考设计的疑问" class="headerlink" title="2.关于参考设计的疑问"></a>2.关于参考设计的疑问</h1><h2 id="Questions-about-FPGA-reference-design"><a href="#Questions-about-FPGA-reference-design" class="headerlink" title="Questions about FPGA reference design"></a>Questions about FPGA reference design</h2><p>关于FPGA的参考设计</p>
+<h3 id="Q-3"><a href="#Q-3" class="headerlink" title="Q"></a>Q</h3><ol>
+<li>DACSDC.py 文件是不是不可以改</li>
+<li>测试用的文件名字是不是纯数字</li>
+<li>参考设计里说<strong>Please pack your code into teamname.py</strong>，是放到<code>.py</code>里还是放到<code>.ipynb</code>里<h3 id="A-3"><a href="#A-3" class="headerlink" title="A"></a>A</h3></li>
+<li>不可以</li>
+<li>是的</li>
+<li>我们认为<code>.ipynb</code>可以更简单准确得测量，但是你都可以放</li>
+</ol>
+<h2 id="I-O-part-in-Reference-Design"><a href="#I-O-part-in-Reference-Design" class="headerlink" title="I/O part in Reference Design"></a>I/O part in Reference Design</h2><h3 id="Q-4"><a href="#Q-4" class="headerlink" title="Q"></a>Q</h3><p>参考设计中的<code>Please don&#39;t change anything in the I/O part</code></p>
+<h3 id="A-4"><a href="#A-4" class="headerlink" title="A"></a>A</h3><p>只要不改<code>DACSDC.py</code>，可以改<code>Su.ipynb</code>。</p>
+<h2 id="版本修订"><a href="#版本修订" class="headerlink" title="版本修订"></a>版本修订</h2><p>数据集移除<code>boat9</code>,<code>group4</code>,<code>bird1</code>。</p>
+<h2 id="FPGA-change-in-proposed-architecture"><a href="#FPGA-change-in-proposed-architecture" class="headerlink" title="FPGA change in proposed architecture"></a>FPGA change in proposed architecture</h2><h3 id="Q-5"><a href="#Q-5" class="headerlink" title="Q"></a>Q</h3><p>FPGA可以改建议结构吗，比如FIFO的大小。</p>
+<h3 id="A-5"><a href="#A-5" class="headerlink" title="A"></a>A</h3><p>请根据最新的模板，FIFO的大小可以改</p>
+<h3 id="Q-6"><a href="#Q-6" class="headerlink" title="Q"></a>Q</h3><p>可以改建议硬件结构吗，不是python接口</p>
+<h3 id="A-6"><a href="#A-6" class="headerlink" title="A"></a>A</h3><p>可以随便改</p>
+<h1 id="3-关于能耗测量"><a href="#3-关于能耗测量" class="headerlink" title="3.关于能耗测量"></a>3.关于能耗测量</h1><h2 id="Energy-measurement"><a href="#Energy-measurement" class="headerlink" title="Energy measurement"></a>Energy measurement</h2><h3 id="Q-7"><a href="#Q-7" class="headerlink" title="Q"></a>Q</h3><p>怎么测量处理图片的能源消耗，有专用的函数吗</p>
+<h3 id="A-7"><a href="#A-7" class="headerlink" title="A"></a>A</h3><p>我们会用第三方工具来测量。PYNQ上没有这个模块。</p>
+<h2 id="Energy-measurment"><a href="#Energy-measurment" class="headerlink" title="Energy measurment"></a>Energy measurment</h2><h3 id="Q-8"><a href="#Q-8" class="headerlink" title="Q"></a>Q</h3><ol>
+<li>修订版允许预处理，能耗测试工具也包含在预处理中吗</li>
+<li>要考虑DRAM读取的能量损耗吗<h3 id="A-8"><a href="#A-8" class="headerlink" title="A"></a>A</h3></li>
+<li>是的，只有<code>import module</code>和<code>download overlay</code>排除在能耗测试之外</li>
+<li>是的，我们会测试PYNQ板子的能耗</li>
+</ol>
+<h1 id="4-关于提交"><a href="#4-关于提交" class="headerlink" title="4.关于提交"></a>4.关于提交</h1><h2 id="submission"><a href="#submission" class="headerlink" title="submission"></a>submission</h2><h3 id="Q-9"><a href="#Q-9" class="headerlink" title="Q"></a>Q</h3><p>关于提交的细节</p>
+<h3 id="A-9"><a href="#A-9" class="headerlink" title="A"></a>A</h3><p>建议给一个readme指导我们根据你的设计走</p>
+<h3 id="提交的文件组织格式"><a href="#提交的文件组织格式" class="headerlink" title="提交的文件组织格式"></a>提交的文件组织格式</h3><p><img src="/2018/03/14/DAC问题讨论/file.png" alt="image"></p>
+<h1 id="DAC最新版本"><a href="#DAC最新版本" class="headerlink" title="DAC最新版本"></a>DAC最新版本</h1><h2 id="最新改变"><a href="#最新改变" class="headerlink" title="最新改变"></a>最新改变</h2><ol>
+<li>减少FPS要求，5FPS</li>
+<li>可以再处理过程中传输data和weight</li>
+<li>不在限制PS/PL的使用，之前只能resize</li>
+</ol>
+<h2 id="Baseline-demos"><a href="#Baseline-demos" class="headerlink" title="Baseline demos"></a>Baseline demos</h2><h3 id="三个路径"><a href="#三个路径" class="headerlink" title="三个路径"></a>三个路径</h3><ol>
+<li>全都你们自己做</li>
+<li>用Xilinx发布的IP核（今天发布了两个，接下来有更多）</li>
+<li>修改现在xilinx的基本例子（两个基本例子）<blockquote>
+<p>Binary Neural Networks on PYNQ<br>基于而二值神经网络BNN图像识别（VGG16）   </p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p>Quantized Neural Network on PYNQ<br>量子神经网络QNN, 参考用Tiny-Yolo的</p>
+</blockquote>
+<h2 id="IP-release"><a href="#IP-release" class="headerlink" title="IP release"></a>IP release</h2><h3 id="两个IP核"><a href="#两个IP核" class="headerlink" title="两个IP核"></a>两个IP核</h3><ul>
+<li>Darius Convolution IP</li>
+<li>image Resize IP<blockquote>
+<p>给了一个调用这两个IP核设计的例子</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="Darius-卷积IP"><a href="#Darius-卷积IP" class="headerlink" title="Darius 卷积IP"></a>Darius 卷积IP</h3><p>加密的黑盒子，看不到源码，基于RTL的</p>
+<h4 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h4><ul>
+<li><strong>IFM</strong>——input map</li>
+<li><strong>Weights</strong>——Weight set</li>
+<li><strong>OFM</strong>——output map<h4 id="卷积参数"><a href="#卷积参数" class="headerlink" title="卷积参数"></a>卷积参数</h4></li>
+<li>ifm-h，ifm-w——IFM的高和宽（6 ~ 32）</li>
+<li>ifm-d——IFM的深度（8 ~ 512）</li>
+<li>kernel-h，kernel-w——卷积核的高宽（1 ~ 16）</li>
+<li>Stride——IFM的步长（0，1，2，4）</li>
+<li>Pad——补0（0 ~ 16）</li>
+<li>channels——通道数（8 ~ 512）<br>####　数据格式<br><img src="/2018/03/14/DAC问题讨论/1.png" alt="image"><br><img src="/2018/03/14/DAC问题讨论/2.png" alt="image"><br><img src="/2018/03/14/DAC问题讨论/3.png" alt="image"><h4 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h4><img src="/2018/03/14/DAC问题讨论/dataflow.png" alt="image"></li>
+</ul>
+<h3 id="image-resize-IP"><a href="#image-resize-IP" class="headerlink" title="image resize IP"></a>image resize IP</h3><p>开源的，基于HLS和RTL</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/03/11/FPGA加速架构设计/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李一涛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/11/FPGA加速架构设计/" itemprop="url">FPGA加速架构设计</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-11T16:02:27+08:00">2018-03-11</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="芯片资源"><a href="#芯片资源" class="headerlink" title="芯片资源"></a>芯片资源</h2><h3 id="Block-RAM"><a href="#Block-RAM" class="headerlink" title="Block RAM"></a>Block RAM</h3><p>Zynq-7020 4.9MB = 4900000 byte = 4900000 <em> 8bit = 2450000 </em> 16bit</p>
+<h2 id="网络结构和大小"><a href="#网络结构和大小" class="headerlink" title="网络结构和大小"></a>网络结构和大小</h2><p><img src="/2018/03/11/FPGA加速架构设计/zf网络说明.jpg" alt="image"></p>
+<h2 id="存储格式"><a href="#存储格式" class="headerlink" title="存储格式"></a>存储格式</h2><p><img src="/2018/03/11/FPGA加速架构设计/1.png" alt="image"><br>假设DDR中的kernel和map都如图，按行储存，从上往下一行一行分割。<br>因为caffe中都是按行来存的。</p>
+<h2 id="卷积架构——设计一"><a href="#卷积架构——设计一" class="headerlink" title="卷积架构——设计一"></a>卷积架构——设计一</h2><ol>
+<li>卷积计算用列流水</li>
+<li>卷积核的并行</li>
+<li>特征图的并行</li>
+</ol>
+<h3 id="整体步骤"><a href="#整体步骤" class="headerlink" title="整体步骤"></a>整体步骤</h3><ol>
+<li>DMA搬运input map到PPBUF（m个并行），搬运n个kernel到Coffe MEM（也是乒乓）</li>
+<li>计算地址，PPBUF按列输入到FIFO</li>
+<li>计算卷积，每次算完得到n个输出，直接存入DDR</li>
+<li>搬入新的kernel（共N个）,重复2，3。</li>
+<li>计算完一遍所有的kernel，DMA搬新的input map，重复2，3，４</li>
+<li>直到计算完所有的M个map，再从DDR读取累加</li>
+</ol>
+<ul>
+<li>M：input map的个数</li>
+<li>m：每次并行的input map的个数</li>
+<li>N: kernel的个数，即最后输出的个数</li>
+<li>n：每次并行的kernel的个数</li>
+</ul>
+<h3 id="结构图"><a href="#结构图" class="headerlink" title="结构图"></a>结构图</h3><p><img src="/2018/03/11/FPGA加速架构设计/3.png" alt="image"></p>
+<h3 id="计算地址输入FIFO"><a href="#计算地址输入FIFO" class="headerlink" title="计算地址输入FIFO"></a>计算地址输入FIFO</h3><p><code>(stride*i - pad + x)*800 + (strid*j - pad + y)</code></p>
+<ul>
+<li>(i,j)：输出的位置</li>
+<li>(x,y)：卷积核的大小</li>
+<li>pad：补0</li>
+<li>stride：步长</li>
+<li>800：输入的长度</li>
+</ul>
+<blockquote>
+<p>例如第一个卷积层，输入(1,3,600,800), 输出(1,96,300,400)</p>
+</blockquote>
+<ul>
+<li>i (0,299) , j (0,399)</li>
+<li>x (0,6) , y (0,6)</li>
+<li>pad = 3</li>
+<li>stride = 2</li>
+</ul>
+<p>下面的伪代码怎么从PPBUF读取输入FIFO的<br><img src="/2018/03/11/FPGA加速架构设计/2.png" alt="image"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">for i = 0:299</span><br><span class="line">    j = 0;</span><br><span class="line">    for y = 0:6          //新行读满一个kernel</span><br><span class="line">        for x = 0:6      //读取一列</span><br><span class="line">        FIFO = input_map[(2i - 3 + x) + (2j - 3 + y)*600]</span><br><span class="line">    </span><br><span class="line">    for j = 1:399</span><br><span class="line">        for y = 5:6      //接下来每次读取stride列</span><br><span class="line">            for x = 0:6  //读取一列</span><br><span class="line">            FIFO = input_map[(2i - 3 + x) + (2j - 3 + y)*600]</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>超出索引范围的要补0</p>
+</blockquote>
+<h3 id="计算"><a href="#计算" class="headerlink" title="计算"></a>计算</h3><p>计算部分直接读取FIFO的stride列到MAC，然后算出一个值，换到新行时就要读入k列。<br>下面伪代码表示FIFO读取多少产生输出，可以用时钟周期来控制。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for i = 0:299</span><br><span class="line">    j = 0;                   //行首</span><br><span class="line">    FIFO_read(k*k);          //读取k*k个数，即k列</span><br><span class="line">    output(i,j) = MAC;       //计算出一个输出</span><br><span class="line">    for j = 1:399</span><br><span class="line">        FIFO_read(k*stride); //读取k*stride个数，即stride列</span><br><span class="line">        output(i,j) = MAC;   //计算出一个输出</span><br></pre></td></tr></table></figure>
+<h3 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h3><p><img src="/2018/03/11/FPGA加速架构设计/5.png" alt="image"><br><code>j + i*W + nn * W*H + mm * N*W*H</code></p>
+<ul>
+<li>nn：第nn个kernel</li>
+<li>mm：第mm读取input map，每次m个map，M/m次</li>
+<li>(W,H)：output map的宽长</li>
+<li>(i,j)：输出的位置</li>
+</ul>
+<blockquote>
+<p>这里输出之后，还要把每次的结果输入BUF累加，得到最后的输出</p>
+</blockquote>
+<h2 id="设计二"><a href="#设计二" class="headerlink" title="设计二"></a>设计二</h2><p>按行搬入，存入FIFO，</p>
+<ul>
+<li>优点可以多个并行</li>
+<li>缺点kernel要重新搬</li>
+</ul>
+<h3 id="结构图-1"><a href="#结构图-1" class="headerlink" title="结构图"></a>结构图</h3><p><img src="/2018/03/11/FPGA加速架构设计/8.png" alt="image"></p>
+<ul>
+<li>R：PPBUF1 + PPBUF2总大小</li>
+<li>r：当前行r = i * stride</li>
+</ul>
+<ol>
+<li>则每次取<code>r : r + kernel_size</code>到FIFO，计算完所有的卷积后，i+1。</li>
+<li>PPBUF1取完时，直接继续取PPBUF2，地址连续</li>
+<li>PPBUF2取完时，取<code>r : R</code>和<code>0 : R - r + kernel_size</code></li>
+</ol>
+<blockquote>
+<p>虽然可以并行，但是每次要搬运所有kernel。</p>
+</blockquote>
+<h2 id="待思考问题"><a href="#待思考问题" class="headerlink" title="待思考问题"></a>待思考问题</h2><ol>
+<li>这样的话每层并行的特征图个数不一样。</li>
+<li>还要再读取一次来把特征图相加，比较不好</li>
+<li>MAC算完怎么直接放到DDR</li>
+<li>计算中的补0怎么弄比较好</li>
+<li>最新版说卷积核加载可以放到overlay里</li>
+<li>BUF程序怎么写</li>
+<li>计算单元写成一个IP核</li>
+</ol>
+<h2 id="Softmax"><a href="#Softmax" class="headerlink" title="Softmax"></a>Softmax</h2><p>softmax是$f(z^j)=\dfrac{e^{j}}{\sum_{i=1}^n e^{i}}$，所以主要是求e的i次。<br>方法主要有<code>泰勒展开</code>，<code>多项式拟合</code>，<code>分段拟合</code>，<code>查表法</code>等。</p>
+<ul>
+<li>泰勒展开：阶数过多，需要大量的乘法器</li>
+<li>查表法：速度快只要一个时钟，但是需要很大的内存</li>
+<li>多项式拟合：同样需要较多的阶数</li>
+<li>分段拟合：比较常用，把softmax分成很多区间，再用多项式去拟合</li>
+</ul>
+<p><img src="/2018/03/11/FPGA加速架构设计/exp.png" alt="image"></p>
+<h3 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h3><ol>
+<li>用matlab拟合函数，算出各个区间的权重和偏置</li>
+<li>把权重k和偏置b存在ROM里</li>
+<li>根据输入判断区间，取出对应的k和b</li>
+<li>计算y = kx + b</li>
+<li>一边求和保存到reg，一边存到BUF</li>
+<li>除法IP核，得到结果。</li>
+</ol>
+<p><img src="/2018/03/11/FPGA加速架构设计/softmax.png" alt="image"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/02/06/ZF网络结构/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -392,8 +974,9 @@
 
       
         
-          <h2 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">input_shape &#123;</span><br><span class="line">    dim: 1</span><br><span class="line">    dim: 3</span><br><span class="line">    dim: 224</span><br><span class="line">    dim: 224</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>数据输入层，<code>(width, height, channels, num)</code>表示分别（宽，长，通道数，图像数）。这里的<code>(1, 3, 224, 224)</code>就表示输入1张3通道的图片，图片大小个224 x 224</p>
+          <p>Faster-rcnn是基于caffe实现，caffe中的数据和参数都是以blob形式定义的，<code>(width, height, channels, num)</code>分别表示（宽，长，通道数，图像数）的四维数组，下文都用这个数据格式。<br><img src="/2018/02/06/ZF网络结构/zf.png" alt="image"></p>
+<h2 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">input_shape &#123;</span><br><span class="line">    dim: 1</span><br><span class="line">    dim: 3</span><br><span class="line">    dim: 224</span><br><span class="line">    dim: 224</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>数据输入层，这里的<code>(1, 3, 224, 224)</code>就表示输入1张3通道的图片，图片大小个224 x 224</p>
 <h2 id="im-info"><a href="#im-info" class="headerlink" title="im_info"></a>im_info</h2><p>对于一幅任意大小的<code>P*Q</code>图像，传入Fsater Rcnn前首先reshape到<code>M*N</code>大小，<code>im_info=[M, N, scale_factor]</code>则保存了此次缩放的所有信息。然后经过Conv Layers，经过4次pooling变为WxH=(M/16)x(N/16)大小，其中feature_stride=16则保存了该信息，用于后面计算anchor偏移量。<br><img src="/2018/02/06/ZF网络结构/info.jpg" alt="image"></p>
           <!--noindex-->
           <div class="post-button text-center">
@@ -1192,383 +1775,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/22/控制多个IP核/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="李一涛">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="涛的世界线">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/22/控制多个IP核/" itemprop="url">控制多个IP核</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-22T18:08:10+08:00">2018-01-22</time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>尝试用ZYNQ控制多个IP核，之前已经了解了AXI-interconnect的作用，可以通过它连接多个Master和Slaver，之前是通过ZYNQ两端接axi-interconnect连DMA的，现在尝试把两个axi-interconnect都增加Master和Slaver，再增加一个DMA串FIFO。接好时钟和复位。自动设置，配置好两个DMA的地址。开始测试。<br>help(overlay)可以看到识别出了两个IP核都是DMA类型  </p>
-<ul>
-<li>axi_dma_0 : pynq.lib.dma.DMA</li>
-<li>axi_dma_1 : pynq.lib.dma.DMA</li>
-</ul>
-<p>因为axi_dma_0接的是vivado提供的ip核AXI4-Stream DATA FIFO，而axi_dma_1接的是我自己写的FIFO，用如下代码分别创建两个dma对象，可以获得不同的输出，证明是达到控制不同IP核的效果。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dma = overlay.axi_dma_0</span><br><span class="line">dma1 = overlay.axi_dma_1</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/22/控制多个IP核/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/21/PYNQ之overlay/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="李一涛">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="涛的世界线">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/21/PYNQ之overlay/" itemprop="url">PYNQ之overlay</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-21T21:19:38+08:00">2018-01-21</time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>PYNQ板子分为PS（Processing System）和PL（Programmable Logic）部分，PS就是CPU，ARM Cortex-A9芯片，跑了Linux系统，可用JUpyter Notebooks打开。PL部分就是FPGA可编程逻辑，是ZYNQ-7020。<br>而overlay可以让PS和PL部分连起来，提供了接口让PS的python可以直接调用PL的Overlay。比如把外围设备封装成python库，就可以直接控制硬件了。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/21/PYNQ之overlay/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/21/PYNQ之mmio/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="李一涛">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="涛的世界线">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/21/PYNQ之mmio/" itemprop="url">PYNQ之mmio</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-21T20:20:40+08:00">2018-01-21</time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="MMIO概念"><a href="#MMIO概念" class="headerlink" title="MMIO概念"></a>MMIO概念</h3><p>MMIO（Memory-mapped I/O，内存映射I/O），与之对应的是PMIO（port-mapped I/O，端口映射I/O），是PC机在中央处理器（CPU）和外部设备之间执行输入输出操作的两种方法。<br>简单点说就是直接把外部设备映射为内存，CPU就可以访问地址就可以直接访问外围设备，通过MMIO就可以用python来配置FPGA上的寄存器，来控制各个IP核了。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/21/PYNQ之mmio/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1620,7 +1826,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-count">17</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1633,7 +1839,7 @@
                 
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
-                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-count">7</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
