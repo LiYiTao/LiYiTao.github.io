@@ -105,17 +105,17 @@
 
 
 
-<meta name="description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
+<meta name="description" content="主要做学习笔记，也记录一些想法">
 <meta property="og:type" content="website">
-<meta property="og:title" content="关键时间节点">
-<meta property="og:url" content="http://tao.github.io/timenode/index.html">
+<meta property="og:title" content="分类">
+<meta property="og:url" content="http://tao.github.io/categories/index.html">
 <meta property="og:site_name" content="涛的世界线">
-<meta property="og:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
+<meta property="og:description" content="主要做学习笔记，也记录一些想法">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-24T05:13:01.452Z">
+<meta property="og:updated_time" content="2018-01-18T08:59:33.003Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关键时间节点">
-<meta name="twitter:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
+<meta name="twitter:title" content="分类">
+<meta name="twitter:description" content="主要做学习笔记，也记录一些想法">
 
 
 
@@ -143,7 +143,7 @@
 
 
 
-  <link rel="canonical" href="http://tao.github.io/timenode/"/>
+  <link rel="canonical" href="http://tao.github.io/categories/"/>
 
 
 
@@ -390,6 +390,7 @@
       
         <h1 id="1-关于PS部分可以处理什么"><a href="#1-关于PS部分可以处理什么" class="headerlink" title="1.关于PS部分可以处理什么"></a>1.关于PS部分可以处理什么</h1><h2 id="Regarding-PS-PL-partition"><a href="#Regarding-PS-PL-partition" class="headerlink" title="Regarding PS/PL partition"></a>Regarding PS/PL partition</h2><h3 id="Q"><a href="#Q" class="headerlink" title="Q"></a>Q</h3><p>之前要求大部分功能要再PL上实现，PS上的计算被限制。我觉得可以自己优化软硬件协同设计，只要达到目的就好。<br>有一些再FPGA上实现没有好处的，想放在软件上实现。</p>
 <h3 id="A"><a href="#A" class="headerlink" title="A"></a>A</h3><p>的确协同设计会增加性能，但比赛本身是要探索卷积神经网络在FPGA上的性能，请遵守当前的规定。<br>（在PS部分只能进行resize，其他预处理都不可以）</p>
+<a id="more"></a>
 <h2 id="Image-conversion-on-PS"><a href="#Image-conversion-on-PS" class="headerlink" title="Image conversion on PS"></a>Image conversion on PS</h2><h3 id="Q-1"><a href="#Q-1" class="headerlink" title="Q"></a>Q</h3><p>可以再PS部分把jpeg转化成RGB格式，再送到PL吗？</p>
 <h3 id="A-1"><a href="#A-1" class="headerlink" title="A"></a>A</h3><p>可以</p>
 <h2 id="FPGA-PS-‘resize’"><a href="#FPGA-PS-‘resize’" class="headerlink" title="FPGA PS ‘resize’"></a>FPGA PS ‘resize’</h2><h3 id="Q-2"><a href="#Q-2" class="headerlink" title="Q"></a>Q</h3><p>是只能用resize函数吗？还是我们可以把数据分割成块，再送到PL</p>

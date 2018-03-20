@@ -105,17 +105,17 @@
 
 
 
-<meta name="description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
+<meta name="description" content="主要做学习笔记，也记录一些想法">
 <meta property="og:type" content="website">
-<meta property="og:title" content="关键时间节点">
-<meta property="og:url" content="http://tao.github.io/timenode/index.html">
+<meta property="og:title" content="分类">
+<meta property="og:url" content="http://tao.github.io/categories/index.html">
 <meta property="og:site_name" content="涛的世界线">
-<meta property="og:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
+<meta property="og:description" content="主要做学习笔记，也记录一些想法">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-24T05:13:01.452Z">
+<meta property="og:updated_time" content="2018-01-18T08:59:33.003Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关键时间节点">
-<meta name="twitter:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
+<meta name="twitter:title" content="分类">
+<meta name="twitter:description" content="主要做学习笔记，也记录一些想法">
 
 
 
@@ -143,7 +143,7 @@
 
 
 
-  <link rel="canonical" href="http://tao.github.io/timenode/"/>
+  <link rel="canonical" href="http://tao.github.io/categories/"/>
 
 
 
@@ -396,8 +396,10 @@
 <h3 id="Multi-channel-FCN"><a href="#Multi-channel-FCN" class="headerlink" title="Multi-channel FCN"></a>Multi-channel FCN</h3><p>图片输入FCN，生成多通道的，像素级别的分数图(score map)和几何尺寸(geometry)。<br>预测通道之一是分数图，像素值在[0,1]。其余通道表示视图中围绕文字的每个像素的几何尺寸。分数代表了在同样的位置预测的几何尺寸的置信度。<br>我们设计了两种几何图形，并设计了不同的损失函数：</p>
 <ul>
 <li>rotated box <strong>RBOX</strong> ：旋转矩形</li>
-<li>quadrangle <strong>QUAD</strong>：四边形<h3 id="Thresholding-amp-NMS"><a href="#Thresholding-amp-NMS" class="headerlink" title="Thresholding &amp; NMS"></a>Thresholding &amp; NMS</h3>阈值应用于每个区域，其中分数超过预定义阈值的几何形状被认为是有效的，并且保存为稍后的非极大值抵制。NMS之后的结果被认为是管道的最终输出。</li>
+<li>quadrangle <strong>QUAD</strong>：四边形</li>
 </ul>
+<a id="more"></a>
+<h3 id="Thresholding-amp-NMS"><a href="#Thresholding-amp-NMS" class="headerlink" title="Thresholding &amp; NMS"></a>Thresholding &amp; NMS</h3><p>阈值应用于每个区域，其中分数超过预定义阈值的几何形状被认为是有效的，并且保存为稍后的非极大值抵制。NMS之后的结果被认为是管道的最终输出。</p>
 <h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p> <img src="/2018/03/20/EAST场景文本检测/structure.png" alt="image"><br>分成三部分</p>
 <h3 id="1-特征提取器"><a href="#1-特征提取器" class="headerlink" title="1. 特征提取器"></a>1. <strong>特征提取器</strong></h3><p>可以是一个使用ImageNet数据集预训练的卷积层与池化层交替的卷积神经网络，代码里改成了<code>ResNet-50</code>。</p>
 <h3 id="2-特征合并分支"><a href="#2-特征合并分支" class="headerlink" title="2. 特征合并分支"></a>2. <strong>特征合并分支</strong></h3><p>如上图，<code>fi</code>是提取的特征图，<code>h3</code>是每层合并后的特征图。<br><code>unpool</code>放大两倍，变成一样尺寸再合并。<br><code>1X1 conv</code>是为了减少通道数。[1X1, 128]，表示输出有128通道。<br>最后一个合并后，加一个<code>3X3 conv</code>，就送到输出层了。</p>
