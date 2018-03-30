@@ -105,17 +105,17 @@
 
 
 
-<meta name="description" content="主要做学习笔记，也记录一些想法">
+<meta name="description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 <meta property="og:type" content="website">
-<meta property="og:title" content="分类">
-<meta property="og:url" content="http://tao.github.io/categories/index.html">
+<meta property="og:title" content="关键时间节点">
+<meta property="og:url" content="http://tao.github.io/timenode/index.html">
 <meta property="og:site_name" content="涛的世界线">
-<meta property="og:description" content="主要做学习笔记，也记录一些想法">
+<meta property="og:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-18T08:59:33.003Z">
+<meta property="og:updated_time" content="2018-01-24T05:13:01.452Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="分类">
-<meta name="twitter:description" content="主要做学习笔记，也记录一些想法">
+<meta name="twitter:title" content="关键时间节点">
+<meta name="twitter:description" content="2018-01-23今天大白永远的离开了，愿他和灰灰在兔子星球开开心心。  大白 2018-01-23灰灰 2015-07-01">
 
 
 
@@ -143,7 +143,7 @@
 
 
 
-  <link rel="canonical" href="http://tao.github.io/categories/"/>
+  <link rel="canonical" href="http://tao.github.io/timenode/"/>
 
 
 
@@ -308,6 +308,266 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/03/30/AXIS-DMA与自定义IP接口问题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李一涛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/30/AXIS-DMA与自定义IP接口问题/" itemprop="url">AXIS-DMA与自定义IP接口问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-30T10:54:44+08:00">2018-03-30</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>今天终于发现了一个困扰多日的问题。</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>写了一个自定义的IP核，实现类似FIFO的功能，用vivado自动生成的<code>AXI-Stream</code>接口，连接AXI DMA，实现先从DDR搬数据到FIFO，在从FIFO搬回来。<br>但是，发送通道可以成功发送，并通过AXI-LITE看到传输的值，确一直无法接收。</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">"statute: %x"</span> % (dma.recvchannel._mmio.read(dma.recvchannel._offset + <span class="number">4</span>))) <span class="comment"># statute</span></span><br><span class="line">print(<span class="string">"control: %x"</span> % (dma.recvchannel._mmio.read(dma.recvchannel._offset)))     <span class="comment"># control</span></span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/03/30/AXIS-DMA与自定义IP接口问题/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/03/28/AXI-Stream协议/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李一涛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="涛的世界线">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/28/AXI-Stream协议/" itemprop="url">AXI-Stream协议</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-28T15:20:57+08:00">2018-03-28</time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>AXI4-Stream跟AXI4的区别就是AXI4-Stream去除了地址线，这样就不涉及读写数据的概念了，只有简单的发送与接收说法，减少了延时。</p>
+<h2 id="接口信号"><a href="#接口信号" class="headerlink" title="接口信号"></a>接口信号</h2><ul>
+<li>ACLK<br>时钟</li>
+<li>ARESET<br>复位</li>
+<li>TVALID<br>主机准备好发送，数据有效信号。</li>
+<li>TREADY<br>从机准备好接收，ready信号。</li>
+<li>TDATA<br>数据线</li>
+<li>TKEEP<br>表示主机数据的字节是否有效，1:有效，0:无效</li>
+<li>TSTRB<br>表示该字节是地址数据还是位置数据，1:数据，0:地址（DMA没有用到）</li>
+<li>TLAST<br>主机最后一个字的指示，下一个CLK数据无效，TVALID变低</li>
+</ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/03/28/AXI-Stream协议/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1322,260 +1582,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/24/AXI-LITE实现控制自定义IP核/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="李一涛">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="涛的世界线">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/24/AXI-LITE实现控制自定义IP核/" itemprop="url">AXI-LITE实现控制自定义IP核</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-24T09:02:15+08:00">2018-01-24</time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这是一个小实验，主要实现自定义一个S_AXI_LITE接口的IP核，然后用PS写入数据该IP核的寄存器，再从该寄存器读取。<br>主要通过mmio来实现读写，关键程序如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mmio.write(offset, value)</span><br><span class="line">mmio.read(offset)</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/24/AXI-LITE实现控制自定义IP核/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tao.github.io/2018/01/23/AXI-LITE总线协议/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="李一涛">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="涛的世界线">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/23/AXI-LITE总线协议/" itemprop="url">AXI-LITE总线协议</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-23T10:24:47+08:00">2018-01-23</time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>AXI（Advanced eXtensible Interface）本是由ARM公司提出的一种总线协议，Xilinx从6系列的FPGA开始对AXI总线提供支持，此时AXI已经发展到了AXI4这个版本，所以当你用到Xilinx的软件的时候看到的都是“AIX4”的IP，如Vivado打包一个AXI IP的时候，看到的都是Create a new AXI4 peripheral。<br>AXI总线有三种类型：</p>
-<ul>
-<li><p><strong>AXI4</strong>：主要面向高性能地址映射通信的需求，是面向地址映射的接口，允许最大256轮的数据突发传输；</p>
-</li>
-<li><p><strong>AXI4-Stream</strong>：面向高速流数据传输；去掉了地址项，允许无限制的数据突发传输规模，之前DMA到FIFO间数据传输就是用的AXI-Stream。</p>
-</li>
-<li><p><strong>AXI4-Lite</strong>：是一个轻量级的地址映射单次传输接口，占用很少的逻辑单元。主要用于命令的控制。今天主要分析这个。</p></li></ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/23/AXI-LITE总线协议/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1627,7 +1633,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-count">19</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1640,7 +1646,7 @@
                 
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
-                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-count">8</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
